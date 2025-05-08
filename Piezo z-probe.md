@@ -1,135 +1,103 @@
-# Using piezo disc as z-probe
+# Использование пьезодиска в качестве Z-пробника
 
-![Schematics](http://3dtoday.ru/upload/main/0aa/0aa029e2c5641ebff3a33ed71cb2e249.png)
+![Схема подключения](http://3dtoday.ru/upload/main/0aa/0aa029e2c5641ebff3a33ed71cb2e249.png)
 
-## Arduino sketch:
+Ниже приведён скетч для Arduino. Настраивайте следующие параметры по месту:
 
-Play with (a) sizes of arrays (b) threshhold and (c) interval between readings:
+1. Размеры массивов (количество усредняемых измерений)
+2. Пороговое значение (`threshold`)
+3. Интервал между измерениями (`interval`)
 
-~~~~
-#include <Average.h>   // Source - https://github.com/MajenkoLibraries/Average 
-Average<int> ave1(2);  // We use an array of last N measurements and average them
+```cpp
+#include <Average.h>   // https://github.com/MajenkoLibraries/Average
+
+// Усреднение N последних измерений
+Average<int> ave1(2);
 Average<int> ave2(2);
 Average<int> ave3(2);
-Average<int> ave(2);   // extra array  to store xor of above readings
-Average<int> ave4(12); // Nozzle piezo is subject to extra noise because of movements, so more measurements are needed
+Average<int> ave(2);   // для XOR-проверки
+Average<int> ave4(12); // дополнительный массив для соплового пьезо
 
-#define DEBUG 0 // Comment out for production
+#define DEBUG 0 // 1 — включить вывод в Serial для отладки
 
 #ifdef DEBUG
-  const int interval = 100; // Microseconds between reading the value of the piezo sensor
+  const int interval = 100; // мкс между замерами пьезо в режиме отладки
 #else
-  const int interval = 1; 
+  const int interval = 1;
 #endif
 
-const int ledPin = 13;      // LED is connected to digital pin 13
-const int relayPin = 19;    // Optocoupler output is connected to digital pin D3
-const int piezoPin1 = A1;   // the piezos are connected to analog pins
-const int piezoPin2 = A2; 
-const int piezoPin3 = A3;
-const int piezoPin4 = A4;
+const int ledPin     = 13;   // светодиод на D13
+const int relayPin   = 19;   // выход оптопары на D3
+const int piezoPin1  = A1;
+const int piezoPin2  = A2;
+const int piezoPin3  = A3;
+const int piezoPin4  = A4;
 
-const bool useNozzlePiezo = 0; // Enables or ignores 4th piezo
+const bool useNozzlePiezo = 0; // игнорировать/участвовать 4-й пьезо
+const int  threshold      = 8; // порог срабатывания
+const int  displayMax     = 20; // максимальное значение для Serial Plotter
 
-const int threshold = 8;    // threshold value to decide when the detected sound is a knock or not
-const int displayMax = 20;  // limits the upper reading in Serial monitor
-
-int sensorReading1 = 0;     // variable to store the value read from the sensor pin
-int sensorReading2 = 0; 
+int sensorReading1 = 0;
+int sensorReading2 = 0;
 int sensorReading3 = 0;
 int sensorReading4 = 0;
 
 void setup() {
-  pinMode(ledPin, OUTPUT); 
+  pinMode(ledPin, OUTPUT);
   pinMode(relayPin, OUTPUT);
-  digitalWrite(ledPin, LOW); 
-  digitalWrite(relayPin, LOW); 
-  if (DEBUG == 1){
-    Serial.begin(250000); // We send values to serial for debugging. Use Arduino's SERIAL PLOTTER feature 
+  digitalWrite(ledPin, LOW);
+  digitalWrite(relayPin, LOW);
+  if (DEBUG == 1) {
+    Serial.begin(250000); // для Serial Plotter
   }
 }
 
 void loop() {
+  // Чтение аналоговых входов
   sensorReading1 = analogRead(piezoPin1);
   sensorReading2 = analogRead(piezoPin2);
   sensorReading3 = analogRead(piezoPin3);
-  if (useNozzlePiezo == 1) {
-    sensorReading4 = analogRead(piezoPin4);
+  sensorReading4 = useNozzlePiezo ? analogRead(piezoPin4) : 0;
+
+  // Усреднение
+  ave1.push(sensorReading1);
+  ave2.push(sensorReading2);
+  ave3.push(sensorReading3);
+  ave4.push(sensorReading4);
+
+  // Простая проверка превышения порога
+  if (sensorReading1 >= threshold || sensorReading2 >= threshold || sensorReading3 >= threshold) {
+    ave.push(threshold);
   } else {
-    sensorReading4 = 0;    
+    ave.push(0);
   }
-  ave1.push(sensorReading1); // We push fresh measurements to an array. Oldest measure get discarded
-  ave2.push(sensorReading2); 
-  ave3.push(sensorReading3); 
-  ave4.push(sensorReading4); 
-  if (
-      ( sensorReading1 >= threshold ) ||
-      ( sensorReading2 >= threshold ) ||
-      ( sensorReading3 >= threshold )  
-    ) {
-      ave.push(threshold);
-    } else {
-      ave.push(0);
-    }
-  if (DEBUG == 1){
-    Serial.print(displayMax); // Dummy constant to keep the chart in SERIAL PLOTTER to scale
-    Serial.print(",");  
-    Serial.print(threshold);  // And another dummy - to show threshold on chart as a line
-    Serial.print(",");  
-    if (sensorReading1 <= displayMax) {
-      Serial.print(sensorReading1);
-    } else {
-      Serial.print(displayMax);
-    }
-    Serial.print(",");  
-    if (sensorReading2 <= displayMax) {
-      Serial.print(sensorReading2);
-    } else {
-      Serial.print(displayMax);
-    }
-    Serial.print(",");  
-    if (sensorReading3 <= displayMax) {
-      Serial.print(sensorReading3);
-    } else {
-      Serial.print(displayMax);
-    }
-    Serial.print(",");  
-    if (sensorReading4 <= displayMax) {
-      Serial.print(sensorReading4);
-    } else {
-      Serial.print(displayMax);
-    }
-    Serial.print(",");  
-  }
-  if (
-      ( ave1.mean() >= threshold ) ||
-      ( ave2.mean() >= threshold ) ||
-      ( ave3.mean() >= threshold ) ||
-      (useNozzlePiezo != 0 && ( ave4.mean() >= threshold * 20 )) || // Nozzle pin is extra sensitive... 
-      ( ave.mean() >= threshold )
-    ) {
-    if (DEBUG == 1){
-      Serial.println(displayMax + 5); // for debugging. Once sensor value is over threshold over given time, output gets triggered and this fact is displayed on chart with separate line. We slightly change the scale of the chart to make it more visible in debugging
-    }
+
+  #if DEBUG == 1
+  // Вывод в Serial для Plotter: фиктивные и реальные данные
+  Serial.print(displayMax); Serial.print(",");
+  Serial.print(threshold);  Serial.print(",");
+  Serial.print(min(sensorReading1, displayMax)); Serial.print(",");
+  Serial.print(min(sensorReading2, displayMax)); Serial.print(",");
+  Serial.print(min(sensorReading3, displayMax)); Serial.print(",");
+  Serial.println(min(sensorReading4, displayMax));
+  #endif
+
+  // Логика с учётом усреднения и дополнительной чувствительности сопла
+  if (ave1.mean() >= threshold
+   || ave2.mean() >= threshold
+   || ave3.mean() >= threshold
+   || (useNozzlePiezo && ave4.mean() >= threshold * 20)
+   || ave.mean()  >= threshold) {
     digitalWrite(ledPin, HIGH);
     digitalWrite(relayPin, HIGH);
-    delayMicroseconds(50000); // once we've triggered output, we stay on for 0.05 sec to make printer really recognize it. 
+    delayMicroseconds(50000); // длительность сигнала 50 мс
   } else {
-    if (DEBUG == 1){
-      Serial.println("0");
-    }
     digitalWrite(ledPin, LOW);
     digitalWrite(relayPin, LOW);
   }
-  if (DEBUG == 1){
-    Serial.print(" "); 
-  }
-  sensorReading1 = 0;
-  sensorReading2 = 0;
-  sensorReading3 = 0;
-  
-  delayMicroseconds(interval); 
-}
-~~~~
 
-Before testing, ensure that both contacts of piezo are properly insulated from printer's frame. Watch the polarity!
+  delayMicroseconds(interval);
+}
+```
+
+**Перед тестированием** убедитесь, что контакты пьезодиска надёжно заизолированы от металлических частей принтера и соблюдена полярность подключения.

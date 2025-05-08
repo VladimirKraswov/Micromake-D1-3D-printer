@@ -1,181 +1,165 @@
-# FAQ on Micromake D1 printer
+# FAQ по 3D-принтеру Micromake D1
 
-This FAQ was written for [Facebook group of the owners of this cheap and great 3D printer](https://www.facebook.com/groups/173676226330714/). Unfortunately, Facebook sucks as a place to post large texts so I am placing them here. Feel free to send your pull requests if you want to add something.
+Этот FAQ написан для [группы владельцев этого недорогого и отличного 3D-принтера на Facebook](https://www.facebook.com/groups/173676226330714/). К сожалению, Facebook неудобен для публикации больших текстов, поэтому я размещаю их здесь. Если хотите что-то добавить — присылайте pull request.
 
 <!-- [Старая русскоязычная группа поддержки в ВК](https://vk.com/micromake3d) (её создали китайские сотрудники магазина, но забросили) и [новая, которую ведут энтузиасты](https://vk.com/micromake_d1). -->
 
-### Variants of Micromake D1 and its “clones”:
+### Варианты Micromake D1 и его «клонов»
 
-Micromake D1 comes in  [3 versions](http://ali.ski/vzso1??&h=7AQHgTTr_&s=1):
+Micromake D1 поставляется в [трёх версиях](http://ali.ski/vzso1??&h=7AQHgTTr_&s=1):
 
-*   cheapest “pulley” version (with wheels)
-*   more expensive “linear rail” (with bearings)
-*   and the most expensive “hiwin” (high quality rails are used)
+* Самая дешевая «шкивовая» версия (с роликами на каретках)
+* Более дорогая версия с линейными рельсами (с подшипниками)
+* Самая дорогая «hiwin» — на высококачественных направляющих HIWIN
 
-Optionally printer can be shipped with heated bed which allows you to print with ABS type of plastic, and not just PLA. Heated bed comes with larger PSU that can supply 16.5A and replaces weak stock PSU.
+Опционально принтер может быть укомплектован подогреваемым столом (для печати ABS), вместе с ним идёт более мощный блок питания 16,5 А вместо штатного слабого.
 
-Printers get shipped with either old or new type of main controller board.
+Также встречаются два варианта главной платы: старая и новая.
 
-### Things to consider before buying:
+### Что учесть перед покупкой
 
-*   You can [earn cash back of about 5%](https://www.ebates.com/r/FACEBO550?eeid=28187) when buying 3D printer on AliExpress, using Ebates or other service. 
-*   Good discussions on what to buy with your Micromake: [here](https://www.facebook.com/groups/173676226330714/permalink/333773956987606/) and [here](https://www.facebook.com/groups/173676226330714/permalink/333812513650417/)
+* Можно получить кешбэк 5 % при покупке на AliExpress через кэшбэк-сервисы (Ebates и др.).
+* Обсуждения аксессуаров и модификаций:
 
-### Links to proven sellers:
+  * [https://www.facebook.com/groups/173676226330714/permalink/333773956987606/](https://www.facebook.com/groups/173676226330714/permalink/333773956987606/)
+  * [https://www.facebook.com/groups/173676226330714/permalink/333812513650417/](https://www.facebook.com/groups/173676226330714/permalink/333812513650417/)
 
-*   [Official store](https://alitems.com/g/1e8d1144949a590a4ec116525dc3e8/?ulp=https%3A%2F%2Fwww.aliexpress.com%2Fstore%2Fproduct%2FMicromake-3D-printer-pulley-version-DIY-kit-Metal-Printer-3d-Printer-Kossel-Delta-3d-Printer-Kit%2F2128317_32647812923.html) (sells the original version in which all plastic parts are injection molded, with black oxidized aluminum profile)
+### Проверенные продавцы
 
-### Buyer reviews:
+* [Официальный магазин на AliExpress](https://www.aliexpress.com/store/product/Micromake-3D-printer-pulley-version-DIY-kit-Metal-Printer-3d-Printer-Kossel-Delta-3d-Printer-Kit/2128317_32647812923.html) — оригинальная версия с чёрными анодированными алюминиевыми профилями и литыми пластиковыми деталями.
 
-Articles:
+### Обзоры и отзывы покупателей
 
-*   Review of HiWin version in Russian: [http://mysku.ru/blog/aliexpress/410...](http://mysku.ru/blog/aliexpress/41006.html)
-*   Review of D1 purchased on TaoBao (in Russian): [http://mysku.ru/blog/aliexpress/394...](http://mysku.ru/blog/aliexpress/39495.html)
-*   Review of heated bed upgrade in Russian: [http://mysku.ru/blog/aliexpress/431...](http://mysku.ru/blog/aliexpress/43168.html)
+**Статьи на русском:**
 
-YouTube video reviews:
+* Обзор версии HiWin: [http://mysku.ru/blog/aliexpress/41006.html](http://mysku.ru/blog/aliexpress/41006.html)
+* Обзор D1 с TaoBao: [http://mysku.ru/blog/aliexpress/39495.html](http://mysku.ru/blog/aliexpress/39495.html)
+* Обзор апгрейда подогреваемого стола: [http://mysku.ru/blog/aliexpress/43168.html](http://mysku.ru/blog/aliexpress/43168.html)
 
-*   tbd
+**Видео на YouTube:**
 
-### Assembly guides:
+* (tbd)
 
-*   There is a PDF assembly manual in English and in Russian on Google Drive (link in next section).
-*   Official YouTube channel with instruction videos (English and Chinese): [https://www.youtube.com/channel/UCY...](https://www.youtube.com/channel/UCY9sDyEi81z3GjXhwGiP_RA/playlists) Note that original video files are in the official Google Drive folder.
-*   Playlists in Chinese on Yoku: [http://www.youku.com/playlist_show/...](http://www.youku.com/playlist_show/id_23218776.html)Русскоязычные покупатели могут получить кэшбэк 7% на Letyshops.Русскоязычные покупатели могут получить кэшбэк 7% на Letyshops.Русскоязычные покупатели могут получить кэшбэк 7% на Letyshops.Русскоязычные покупатели могут получить кэшбэк 7% на Letyshops.
+### Руководства по сборке
 
-### Common assembly mistakes; tips & tricks:
+* PDF-мануал (англ. и рус.) — ссылка в разделе «Официальное ПО» ниже.
+* Официальный YouTube-канал (англ./кит.) — [https://www.youtube.com/channel/UCY9sDyEi81z3GjXhwGiP\_RA/playlists](https://www.youtube.com/channel/UCY9sDyEi81z3GjXhwGiP_RA/playlists)
+* Плейлисты на Youku (кит.): [http://www.youku.com/playlist\_show/id\_23218776.html](http://www.youku.com/playlist_show/id_23218776.html)
 
-*   There are 2 fans on the effector. One is used to constantly cool down the aluminum fins of the extruder. Second one will turn on just occasionally, to cool the model you print. Double check - the cooler that blows on the aluminum fins must be always on when printer is on.
-*   For the best results disassemble the printing head. Take out the hot end and apply some thermal paste on the tip that goes into “cooling” part with aluminum fins (same thermal paste that goes between computer’s CPU and cooler). Wrap the other tip that goes into the square block with the heater into [teflon tape](http://3deshnik.ru/wp-content/uploads/2016/03/IMG_5992.jpg). This is the teflon tape that is used in the plumbing. This ensures the abrupt drop in the temperature between hot and cool zones of the hot end.
+### Типичные ошибки при сборке и советы
 
-### Links to official software:
+* На экструдере два вентилятора: один постоянно обдувает алюминиевые ребра радиатора, второй включается периодически для охлаждения печати. Проверьте, что первый вентилятор всегда включён при работе принтера.
+* Для улучшения теплопередачи разберите хотэнд, нанесите термопасту на стык медной насадки и радиаторного блока. Обмотайте фитинг, идущий в квадратный нагревательный блок, сантехнической фум-лентой — это снизит теплопроводность в холодной зоне.
 
-Assembly videos and official software are on Google Drive: [https://drive.google.com/drive/fold...](https://drive.google.com/drive/folders/0B1DQUrzkDP-tNDU0NXhVcGhlc0k?usp=sharing).
+### Официальное ПО и прошивки
 
-Although primary file repository with newer software apperats to be [on Chinese portal and file storage site, Baidu](http://pan.baidu.com/s/1hshTkFU#list/path=%2F).
+Сборочные видео и ПО на Google Drive: [https://drive.google.com/drive/folders/0B1DQUrzkDP-tNDU0NXhVcGhlc0k?usp=sharing](https://drive.google.com/drive/folders/0B1DQUrzkDP-tNDU0NXhVcGhlc0k?usp=sharing)
 
-Google Drive [has](https://www.facebook.com/groups/173676226330714/permalink/304678969897105/?comment_id=304767046554964&comment_tracking={"tn":"R"}) Repetier-Firmware version `0.92.9` and Micromake version `2.0.2` at the time of writing.
+Актуальные версии (на момент написания):
 
-R.Mendelis shared [CURA version 15.04.0917](https://www.facebook.com/groups/173676226330714/permalink/335784940119841/). It is in Chinese, check screenshot to see how to switch it to English.
+* Repetier-Firmware 0.92.9 и Micromake 2.0.2
+* CURA 15.04.0917 (китайская сборка, переключение на англ. в настройках)
 
-GitHub repository of printer’s firmware (it is unknown whether it is fresh and/or original): [https://github.com/coldnew/MICROMAK...](https://github.com/coldnew/MICROMAKE)
+Другие репозитории:
 
-Micromake uses custom modified software called “CURA” - this software was originally developed for Ultimaker brand of printers and was “borrowed” by Chinese company that makes Micromake D1\. “CURA” software has a special module used to calibrate printer and flash it with firmware. Please be aware that if you install heated bed upgrade, you need to enable checkbox in CURA and flash updated firmware to printer - see screenshot
+* GitHub: [https://github.com/coldnew/MICROMAKE](https://github.com/coldnew/MICROMAKE) (неизвестно, свежая ли)
 
-![Bed upgrade checkbox](http://i.ebayimg.com/00/s/MTAwMFgxMDAw/z/RLcAAOSwNRdYA-gx/$_10.JPG?set_id=880000500F)
+> После установки подогреваемого стола не забудьте в CURA отметить галочку "Heated bed" и прошить принтер новой прошивкой.
 
-### How to auto-level and calibrate printer. Quality issues with prints and how to solve them:
+### Автовыравнивание и калибровка
 
-[**HERE IS THE GUIDE ON CALIBRATION**](./calibrating.md)
+**[Руководство по калибровке](./calibrating.md)**
 
-Explanation of what “horizontal radius”, “diagonal rod length” and other terms mean: [https://forum.repetier.com/discussi...](https://forum.repetier.com/discussion/435/initial-delta-value-setup) (see illustrations!). There are different naming conventions, for example “horizontal radius” [is referred to as “delta radius” in other projects](https://www.facebook.com/groups/173676226330714/permalink/326322951066040/?comment_id=326351537729848&comment_tracking={"tn":"R"}).
+* Что такое «горизонтальный радиус», «длина диагонали» и т. д.: [https://forum.repetier.com/discussion/435/initial-delta-value-setup](https://forum.repetier.com/discussion/435/initial-delta-value-setup)
+* Длина тяг (hole-to-hole) для версии с роликами — 215–217 мм (в CURA по умолчанию ошибочно 210 мм).
+* Горизонтальный радиус \~95 мм.
+* Онлайн-калькулятор: [http://escher3d.com/pages/wizards/wizarddelta.php](http://escher3d.com/pages/wizards/wizarddelta.php)
+* Видео калибровки:
 
-Rod length should be [measured from hole to hole](https://www.facebook.com/groups/173676226330714/permalink/326218534409815/), on “pulley version” of Micromake D1 it is `215mm` to `217mm` (value in CURA is wrong, it says `210mm` for some reason). Horizontal radius is about `95mm`.
+  * Repetier (кит.): [https://www.youtube.com/watch?v=UFPXBdeJmg0](https://www.youtube.com/watch?v=UFPXBdeJmg0)
+  * CURA (англ.): [https://www.youtube.com/watch?v=TFeyNqYMFgU](https://www.youtube.com/watch?v=TFeyNqYMFgU)
+  * Z-Leveling (Repetier-FW): [https://www.youtube.com/watch?v=L9URtv2LqKc](https://www.youtube.com/watch?v=L9URtv2LqKc)
+* OpenDACT: [http://forum.seemecnc.com/viewtopic.php?f=36\&t=8698](http://forum.seemecnc.com/viewtopic.php?f=36&t=8698)
 
-*   [Official YouTube video](https://www.youtube.com/watch?v=UFPXBdeJmg0) (in Chinese) that describes calibration process
-*   [Another video](https://www.youtube.com/watch?v=TFeyNqYMFgU) (in English), describes calibration using CURA
-*   [Online calculator](http://escher3d.com/pages/wizards/wizarddelta.php) that asks you to perform several measurements and gives you the adjustments you need to make
-*   Some theory on calibrating delta printers: [http://minow.blogspot.de/](http://minow.blogspot.de/)
-*   “Manual Delta Calibration using M665 and M666” (not tested) - YouTube [video (ignore OpenSCAD part in it)](https://www.youtube.com/watch?v=tDLbqLve128)
-*   “[mini Kossel Calibration using Repetier FW](https://www.youtube.com/watch?v=uDB4hE6nyYI)”
-*   “[Z-Leveling for Delta Printers with Repetier-Firmware](https://www.youtube.com/watch?v=L9URtv2LqKc)” by Repetier
-*   OpenDACT(Delta Automatic Calibration Tool) - For Repetier - [description](http://forum.seemecnc.com/viewtopic.php?f=36&t=8698) demo
-*   tbd
+### Типичные проблемы при печати и их решения
 
-Typical problems with printing (classification of defects):
+* Англ.: [http://reprap.org/wiki/Print\_Troubleshooting\_Pictorial\_Guide](http://reprap.org/wiki/Print_Troubleshooting_Pictorial_Guide)
+* Рус.: [http://3dtoday.ru/blogs/leoluch/defects-3d-printing-will-try-to-introduce-a-classification/](http://3dtoday.ru/blogs/leoluch/defects-3d-printing-will-try-to-introduce-a-classification/)
 
-*   in English - [http://reprap.org/wiki/Print_Troubl...](http://reprap.org/wiki/Print_Troubleshooting_Pictorial_Guide)
-*   in Russian - [http://3dtoday.ru/blogs/leoluch/defects-3d-printing-will-try-to-introduce-a-classification/](http://3dtoday.ru/blogs/leoluch/defects-3d-printing-will-try-to-introduce-a-classification/) 
+### Апгрейды и модификации
 
-### Hardware tweaks and modifications:
+**Каркас:**
 
-#### Body:
+* Замена квадратных гаек на T‑гайки.
 
-Replacing stock square nuts [with t-nuts](https://www.facebook.com/photo.php?fbid=10209986622366252&set=oa.287323128299356&type=3&theater)
+**Хотэнд:**
 
-#### Printing head and hot end (nozzle):
+* Стандартный E3D V5 с медным соплом 0.4 мм и тефлоновой трубкой.
+* Рекомендуется иметь набор сверл 0.2–0.4 мм для прочистки сопла.
 
-Micromake D1 uses “E3D V5” printing head ((documentation)[http://wiki.e3d-online.com/wiki/E3D-v5_Documentation]). It is shipped with the standard copper nozzle with 0.4mm diameter. It has Teflon tube inside. (See photos in this Russian article on hot end types - [http://3deshnik.ru/blogs/akdzg/razn...](http://3deshnik.ru/blogs/akdzg/raznoobrazie-xotendov-e3d))
+**Ремни и шкивы:**
 
-Consider buying a set of `0.2`,  `0.3` and `0.4`mm drill bits - they are useful with cleaning nozzle from debris.
+* GT2 ремни.
+* Замена шкивов на зубчатые.
 
-#### Belts:
+**Тяги:**
 
-Micromake D1 uses “GT2” type belts.
+* Сток 217 мм.
+* Замена на тяги Traxxas, установка пружин.
 
-*   Replacing pulley with [toothed version](https://www.facebook.com/groups/173676226330714/permalink/326137101084625/).
+**Подогреваемый стол:**
 
-#### Rods:
+* Изоляция под столом (сил. коврик или пробка) повышает скорость прогрева.
+* Повышение напряжения блока питания с 12 В до 13.9 В ускоряет разогрев (безопасно).
 
-Stock rods are `217mm` in length.
+**Блок питания и питание платы:**
 
-*   Using [traxxas](https://www.facebook.com/groups/173676226330714/permalink/276316932733309/) rods instead of stock rods ([more detailed post](https://www.facebook.com/groups/173676226330714/permalink/276316912733311/))
-*   Using additional [springs](https://www.facebook.com/photo.php?fbid=10209986622486255&set=oa.287323128299356&type=3&theater)
-*   tbd
+* Заводской зелёный разъём не рассчитан на 16 А — пожароопасен! Лучше припаять толстый провод к плате на предназначенные для этого площадки.
+* Альтернатива: разъём от RC моделей.
+* Вынос блока питания под корпус (мод в блоге).
 
-#### Heated bed:
+**Эффектор:**
 
-*   You can greatly improve the speed of the warm-up if you place silicone mat or cork under the heated bed. It will also protect main board and wires from heat
-*   Warm-up speed could also be greatly improved if you raise the voltage of the PSU from default 12V to 13.9V. It is safe for main board.
+* Магнитный шарнир.
+* Подсветка светодиодами.
 
-#### PSU:
+**Позиционирование катушки:**
 
-*   Green power connector [is a fire hazard](http://3dtoday.ru/blogs/sanja/little-son-came-to-his-father-and-said-crumb/)! It is not rated for 16A current and will fry. Solder the thick copper wire (1.5mm2 - 2.5mm2 thick) to the board directly - there are dedicated pads. ([Link in English](https://www.facebook.com/groups/173676226330714/permalink/299971320367870/))
-*   Using [connector from RC model](https://www.facebook.com/groups/173676226330714/permalink/323357818029220/) instead
-*   You can put the PSU underneath the printer [with this simple mod (article in Russian with lots of photos)](http://3dtoday.ru/blogs/sanja/hide-the-power-supply-delta-printer-under-body/).
+* Держатель катушки и установка экструдерной головы.
 
-#### Upgrading effector:
+**Замена датчика Z:**
 
-*   [Magnetic joint](https://www.facebook.com/groups/173676226330714/permalink/320996994931969/) upgrade
-*   [Adding light](https://www.facebook.com/groups/173676226330714/permalink/295700380794964/) LEDs
-*   tbd
+* FSR (датчики давления).
+* Весовой датчик (load cell).
+* Механический датчик.
+* Микровыключатель.
 
-#### Placing the extruder so it is located conveniently. Adding spool holder.
+**Шаговые двигатели:**
 
-[https://www.facebook.com/groups/173...](https://www.facebook.com/groups/173676226330714/permalink/323171281381207/)
+* Включение 1/32 микрошагов на старой плате.
 
-#### Changing the auto-level mechanism to other type of probes:
+**Замена платы на 32‑бит:**
 
-*   Using [FSR](https://groups.google.com/forum/#!topic/deltabot/6fxnM20nYKc%5B1-25%5D) (force sensing resistors)
-*   Using [weight sensors (in Russian)](http://3dtoday.ru/blogs/sanja/i-want-to-consult-about-the-installation-of-the-load-cell-weight-cell-/) ([in English](https://www.facebook.com/groups/173676226330714/)) - work in progress
-*   [Mechanical Z-probe](https://www.facebook.com/groups/173676226330714/permalink/293425914355744/)
-*   [Microswitch probe](https://www.facebook.com/groups/173676226330714/)
-*   tbd
+* Duet.
+* MKS SBASE.
 
-#### Stepper motor:
+**Удалённое управление:**
 
-*   [Detailed explanation on how to enable 16 to 32 microstepping on the "old" board](https://vk.com/micromake_d1?z=photo-134740295_456239033%2Fwall-134740295_29)
-*   Microstepping (?): [https://www.facebook.com/zzcatvs/posts/995106527263309?pnref=story](https://www.facebook.com/zzcatvs/posts/995106527263309?pnref=story)
+* OctoPrint на Orange Pi PC.
 
-#### Changing main board to 32-bit versions:
+### Альтернативное ПО управления и слайсеры
 
-Stock main board appears to be standard RAMPS 1.4.
+* Прошивки от @zzcatvs в группе.
+* Список слайсеров: [https://www.facebook.com/groups/173676226330714/permalink/320261655005503/](https://www.facebook.com/groups/173676226330714/permalink/320261655005503/)
+* Настройки для RepetierHost: [https://www.facebook.com/groups/173676226330714/permalink/323009244730744/](https://www.facebook.com/groups/173676226330714/permalink/323009244730744/)
+* Альтернативная прошивка RichCal с автолевелом.
+* Marlin.
+* Simplify3D.
+* KISSlicer.
+* RepetierHost + калибровка (видео).
 
-*   [Upgrading to Duet](https://miscsolutions.wordpress.com/2015/01/04/upgrading-the-mini-kossel-to-duet-electronics-part-1-hardware/)
-*   [MKS SBASE](https://www.facebook.com/groups/173676226330714/permalink/321204871577848/)
-*   tbd
+### Другие ресурсы
 
-#### Adding remote control (Octoprint and others):
-
-*   Step-by-step guide on installing OctoPrint on cheap Raspberry clone, Orange PI PC: [http://3dtoday.ru/blogs/eta4ever/orange-octopus-a-step-by-step-guide/](http://3dtoday.ru/blogs/eta4ever/orange-octopus-a-step-by-step-guide/)
-*   tbd
-
-### Software upgrades (changing CURA to other control software, different slicers)
-
-Micromake’s representative in this group is [@zzcatvs](https://www.facebook.com/zzcatvs) He shared the latest firmware [in this post](https://www.facebook.com/groups/173676226330714/permalink/244973162534353/?comment_id=245027129195623&comment_tracking={"tn":"R9"}).
-
-*   List of [other slicers](https://www.facebook.com/groups/173676226330714/permalink/320261655005503/) used by members of this group
-*   [Settings for RepetierHost](https://www.facebook.com/groups/173676226330714/permalink/323009244730744/)
-*   Mention of the [alternative “RichCal” firmware with autoleve feature](https://groups.google.com/forum/#!searchin/deltabot/micromake|sort:relevance/deltabot/AZHM_fai5fA/-T8T6h8pDAAJ) on Google Groups. ([Reported use of it by a member](https://www.facebook.com/groups/173676226330714/permalink/323855621312773/?comment_id=324436021254733&comment_tracking={"tn":"R"}))
-*   [Marlin firmware](https://groups.google.com/forum/#!searchin/deltabot/micromake|sort:relevance/deltabot/AZHM_fai5fA/-T8T6h8pDAAJ)
-*   Detailed walkthrough - setting up Simplify 3D to work with Micromake - [https://www.youtube.com/watch?v=zsq...](https://www.youtube.com/watch?v=zsqD5mTYO0E) (please note that author starts with deleting initial config).
-*   Using Micromake D1 with KISSLICER - [https://youtu.be/vlvetkP1EkA](https://youtu.be/vlvetkP1EkA)
-*   Installing RepetierHost and calibration: [https://www.youtube.com/watch?v=Nex...](https://www.youtube.com/watch?v=Nexaf7XOoPg)
-*   tbd
-
-### Other resources on the web:
-
-*   Forum for Micromake D1 owners on Thingiverse: [<span class="_4yxr">http://www.thingiverse.com/groups/micromake/page:1](http://www.thingiverse.com/groups/micromake/page:1) there
-*   [Reddit thread](https://www.reddit.com/r/3Dprinting/comments/4vrmsh/micromake_d1_or_alternative/) on Micromake
-*   Wiki page on RepRap.org on “Kossel” family of delta printers - [http://reprap.org/wiki/Kossel](http://reprap.org/wiki/Kossel)
-*   tbd
+* Thingiverse: [http://www.thingiverse.com/groups/micromake/page:1](http://www.thingiverse.com/groups/micromake/page:1)
+* Reddit: [https://www.reddit.com/r/3Dprinting/comments/4vrmsh/micromake\_d1\_or\_alternative/](https://www.reddit.com/r/3Dprinting/comments/4vrmsh/micromake_d1_or_alternative/)
+* RepRap Wiki (семейство Kossel): [http://reprap.org/wiki/Kossel](http://reprap.org/wiki/Kossel)

@@ -1,147 +1,137 @@
-# Important note:
+## Важная заметка:
 
-The stock Z-probe of the Micromake is an utter shit. Because of the way it is constructed and friction between plastic parts, probing different areas of the bed produces a random error of as high as 0.2mm. Even the best calibration algorithm can't level your bed if the source data is so dirty.
+Оригинальный Z-пробник у Micromake — полный отстой. Его конструкция и трение пластиковых деталей приводят к случайной погрешности зондирования до 0,2 мм по разным участкам стола. Даже лучший алгоритм калибровки не выровняет поверхность, если исходные данные такие “грязные”.
 
-The solution to this problem is this $1.5 device that should be mounted directly on the nozzle:
+Решение этой проблемы — устройство за \$1,5, которое крепится прямо на сопло:
 
 [https://aliexpress.com/item/32838312776.html](https://alitems.com/g/1e8d1144949a590a4ec116525dc3e8/?ulp=https%3A%2F%2Faliexpress.com%2Fitem%2F32838312776.html)
 
 ![zprobe](https://user-images.githubusercontent.com/1763243/80029227-27eb3e80-84ef-11ea-9c88-dffa44bcf45f.png)
 
-Basically, it is a flexible 0.2mm thick button that clicks as soon as the nozzle reaches the bed. It is soft and doesn't flex the effector like the original mechanism does. 
+Это гибкая кнопка толщиной 0,2 мм, которая щёлкает, как только сопло касается стола. Она мягкая и не деформирует экструдер, как заводской механизм.
 
-# Important note no. 2:
+## Важная заметка № 2:
 
-This HOWTO is no longer maintained. I've moved from stock Repetier firmware to Marlin 2.0 firmware which has an amazing feature called ["Unified bed leveling"](https://marlinfw.org/docs/features/unified_bed_leveling.html). It does its job like a magic.
+Это руководство больше не поддерживается. Я перешёл со стоковой прошивки Repetier на Marlin 2.0, в которой есть отличная функция «Unified Bed Leveling» (единое выравнивание стола). Она работает как волшебство: [https://marlinfw.org/docs/features/unified\_bed\_leveling.html](https://marlinfw.org/docs/features/unified_bed_leveling.html)
 
+---
 
-# Patching and installing Micromake D1 firmware (Repetier)
+# Патчинг и установка прошивки Micromake D1 (Repetier)
 
-***Warning* - I used 1st generation Micromake board as reference. Mine is set to 32-microsteps mode with an onboard jumper. Your settings may differ, pay close attention to that. <!-- В качестве средства для отправки команд принтеру я использую Repetier Host. Если вы используете штатную программу CURA, ваши шаги будут немного отличаться.-->**
+**Внимание!** В примерах я использую плату Micromake первого поколения, настроенную на 32 микрошага с помощью перемычки. Ваши настройки могут отличаться — проверьте их внимательно.
 
-Micromake's main board is basically an Arduino with added circuitry - same processor plus drivers for motors and couple of MOSFETs to drive heater and hot bed. As any Arduino it can be reprogrammed using your PC and USB cable.
+Плата принтера — по сути Arduino Mega с драйверами двигателей и MOSFET для нагревателя и стола. Её можно перепрограммировать через USB.
 
-To reprogram your board, you'd need "Arduino IDE". You can download it for free from  https://www.arduino.cc/en/Main/Software (you will need "Windows installer" link). Download and install it.
+## Установка инструментов
 
-Next you'd need source files for firmware itself. Micromake uses "Repetier" firmware from here - https://github.com/repetier/Repetier-Firmware, yet you can't just take it and apply. First, it needs to be tuned to match our printer's hardware. Second, you'd miss patches from Chinese makers of our board.
+1. Скачайте и установите Arduino IDE: [https://www.arduino.cc/en/Main/Software](https://www.arduino.cc/en/Main/Software) (Windows Installer).
+2. Загрузите прошивку Repetier: [https://github.com/repetier/Repetier-Firmware](https://github.com/repetier/Repetier-Firmware) (базовые файлы).
+3. Скачайте патчи Micromake: [https://drive.google.com/drive/folders/0B1DQUrzkDP-tNDU0NXhVcGhlc0k](https://drive.google.com/drive/folders/0B1DQUrzkDP-tNDU0NXhVcGhlc0k) (`Micromake D1.zip`).
+4. Распакуйте `Micromake D1.zip` в папку `C:\Repetier`.
+5. Откройте `Repetier.ino` в Arduino IDE.
+6. Подключите плату по USB.
+7. В меню **Tools → Board** выберите **Arduino/Genuino Mega or Mega 2560**.
+8. В **Tools → Port** выберите COM-порт платы.
+9. Нажмите **Ctrl+R** для проверки компиляции. В конце должно появиться:
 
-Your easiest option would be to grab the Chinese sources from official repository and tweak it. Get it from  https://drive.google.com/drive/folders/0B1DQUrzkDP-tNDU0NXhVcGhlc0k - use a file called `Micromake D1.zip`.
+   ```
+   Sketch uses 137,236 bytes (54%) of program storage space. Maximum is 253,952 bytes.
+   Global variables use 6,984 bytes (85%) of dynamic memory, leaving 1,208 bytes for local variables. Maximum is 8,192 bytes.
+   ```
 
-Unzip it to any location, but ensure that the target folder is named `Repetier`. Let's assume it is `c:\Repetier`. Lanch file called `Repetier.ino`.
+## Патчинг прошивки
 
-Plug the board using USB-cable to your PC. In Arduino IDE go to the menu called `Tools` - `Board` and choose `Arduino/Genuino MEGA or MEGA 2560`. In `Tools` - `Port` choose the port that Windows has assigned to your printer (verify its name with Windows Device Manager if needed).
+### 1. Исправление G30 (Commands.cpp)
 
-To ensure that you have downloaded everything correctly, hit `Ctrl+R`. You'd see commands running in the bottom of the window, and finally you'd see `Done compining` message and a summery like this: 
+Вкладка `Commands.cpp`, найдите блок:
 
-    Sketch uses 137,236 bytes (54%) of program storage space. Maximum is 253,952 bytes.
-    Global variables use 6,984 bytes (85%) of dynamic memory, leaving 1,208 bytes for local variables. Maximum is 8,192 bytes.
-    Low memory available, stability problems may occur.
+```cpp
+case 30: { // G30 set Z0
+    uint8_t p = (com->hasP() ? (uint8_t)com->P : 3);
+```
 
-If you got that that means you installed Arduino IDE right and downloaded firmware sources correctly.
+Измените `: 3` на `: 2`:
 
-## Let's patch the firmware
+```cpp
+    uint8_t p = (com->hasP() ? (uint8_t)com->P : 2);
+```
 
-Main window of Arduino IDE would have many tabs - one per each file in the firmware. Locate the tab with `Commands.cpp` (don't confuse it with `Commands.h`!). Find these lines:
+Это необходимо для совместимости с OpenDACT.
 
-    case 30:
-        { // G30 single probe set Z0
-            uint8_t p = (com->hasP() ? (uint8_t)com->P : 3);
+### 2. Дополнительные правки (Configuration.h)
 
-you will need to change `P : 3` to `P : 2`, so you'd get this:
+#### STARTUP\_GCODE
 
-    case 30:
-        { // G30 single probe set Z0
-            uint8_t p = (com->hasP() ? (uint8_t)com->P : 2);
+```cpp
+#define STARTUP_GCODE "M115\nM119\nG28\nM140 S115\nM105 X0\n"
+```
 
-This change is enough to make OpenDACT work with Repetier. If you don't want to change anything else, just skip the next section.
+* `M115` — вывод версии прошивки
+* `M119` — проверка концевиков
+* `G28` — homing всех осей
+* `M140 S115` — прогрев стола до 115 °C
+* `M105 X0` — опрос термисторов
 
-## Few more useful changes to the firmware
+#### Z\_PROBE\_REPETITIONS
 
-Once we started editing, we can add more useful tweaks. Switch to `Configuration.h` and use `Ctrl+H` to quickly locate the parts we will be editing:
+```cpp
+#define Z_PROBE_REPETITIONS 3
+```
 
-### STARTUP_GCODE
+Усреднение 3 измерений вместо 1.
 
-This parameter lists g-codes that are executed each time you power on or reboot printer. It is empty by default, mine looks like this (commands are separated with `\n` symbols):
+#### Точки зондирования
 
-    #define STARTUP_GCODE "M115\nM119\nG28\nM140 S115\nM105 X0\n\n"
+```cpp
+#define Z_PROBE_X1 49.24
+#define Z_PROBE_Y1 8.682
+#define Z_PROBE_X2 -32.139
+#define Z_PROBE_Y2 38.302
+#define Z_PROBE_X3 -8.682
+#define Z_PROBE_Y3 -49.24
+```
 
-I'll explain these one by one:
+#### BEEPER
 
-| Command | What it does: |
-| --- | --- |
-| `M115` | Prints firmware version to log window |
-| `M119` | Checks the status of the endstops |
-| `G28` | Homes the effector |
-| `M140 S115` | Makes heated bed to warm up to 115 degrees (for ABS). *Warning! Don't leave your printer unattended!*  |
-| `M105 X0` | Queries temperature sensors |
+```cpp
+#define BEEPER_SHORT_SEQUENCE 1,1
+#define BEEPER_LONG_SEQUENCE 2,2
+```
 
-Reference with full list of commands can be found here: http://reprap.org/wiki/G-code
+#### Подогрев стола
 
-### Z_PROBE_REPETITIONS
+```cpp
+#define HAVE_HEATED_BED 1
+```
 
-By default the value of this parameter is `1` - probe checks the bed only once in the given point. Since our z-probe is shitty, change this to `3` to improve measurements. Printer will average the result and use that:
+#### Длина диагонали дельты
 
-    #define Z_PROBE_REPETITIONS 3 // Repetitions for probing at one point.
+```cpp
+#define DELTA_DIAGONAL_ROD 217
+```
 
-### Z_PROBE_X1
+#### Микрошаги и шаги на оборот
 
-Chinese makers of our printer for some reason did not include correct coordinates for default probe points. Replace their incorrect values with right ones (three pairs of coordinates make 6 lines of code):
+```cpp
+#define STEPS_PER_ROTATION 200
+#define MICRO_STEPS 32
+```
 
-    #define Z_PROBE_X1 49.24
-    #define Z_PROBE_Y1 8.682
-    #define Z_PROBE_X2 -32.139
-    #define Z_PROBE_Y2 38.302
-    #define Z_PROBE_X3 -8.682
-    #define Z_PROBE_Y3 -49.24
+#### Текст заставки
 
-### BEEPER
+```cpp
+#define UI_PRINTER_NAME "Micromake 2.0.?"
+#define UI_PRINTER_COMPANY "www.micromake.org"
+```
 
-If you'd like to make your printer quieter, adjust the default beeps of the buzzer:
+## Загрузка и проверка
 
-    #define BEEPER_SHORT_SEQUENCE 1,1
-    #define BEEPER_LONG_SEQUENCE 2,2
+1. Сохраните или очистите EEPROM (см. HOWTO по очистке).
+2. Нажмите **Ctrl+U** для загрузки.
+3. Проверьте движение экструдерной головки — при ошибках скоростей пересмотрите MICRO\_STEPS и steps/mm в EEPROM.
 
-### Temperature
+## Возврат к заводской прошивке
 
-If you own heated bed module, make sure the following line has one instead of zero::
+Загрузите стоковую прошивку через CURA — она сразу восстановит исходные настройки.
 
-    #define HAVE_HEATED_BED 1
-
-### Correct value for `Delta diagonal rod`
-
-For some strange reason Micromake comes with wrong value for diagonal rod length. Change it to correct value - from `210`mm to `217`mm:
-
-    // Delta settings
-    #if DRIVE_SYSTEM==DELTA
-    /** \brief Delta rod length (mm)
-    */
-    #define DELTA_DIAGONAL_ROD 217 // mm
-
-### Correct microstepping value
-
-As I wrote earlier, my printer is set to 32 microsteps and 200 steps per mm. The following lines in the software match my hardware setup. Adjust yours according to your hardware:
-
-    /** \brief Steps per rotation of stepper motor */
-    #define STEPS_PER_ROTATION 200
-
-    /** \brief Micro stepping rate of X, Y and Y tower stepper drivers */
-    #define MICRO_STEPS 32
-
-### Change text on welcome splash screen
-
-Instead of "Micromake" you can display whatever you want. I suggest to edit this so you will ensure that your own version indeed replaced factory firmware. Edit these lines accordingly:
-
-    #define UI_PRINTER_NAME "Micromake 2.0.?"
-    #define UI_PRINTER_COMPANY "www.micromake.org"
-
-## Uploading your patched firmware to printer
-
-*Warning!* Save or write down your EEPROM settings before proceeding!. It is highly recommended to *erase* EEPROM before changing firmware - see [this HOWTO](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/EEPROM%20settings.md#this-arduino-sketch-wipes-eeprom-clean).
-
-After you've made your edits, press `Ctrl+U`. Your code will compile and will get uploaded to printer in 10-20 seconds. **Please test your printer by making the effector move a bit. If it moves twice faster or twice slower, double-check and fix microstepping settings and `steps per mm` value in EEPROM!** 
-
-## How to revert everything back in case you broke things
-
-Open CURA and upload default firmware - it shoud fix things for you immediately.
-    
-This article continues in "[Calibrating Micromake D1 using OpenDACT utility](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/Calibrating%20Micromake%20D1%20with%20OpenDACT.md)"
+*Дальнейшая калибровка — в [руководстве по OpenDACT](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/Calibrating%20Micromake%20D1%20with%20OpenDACT.md).*

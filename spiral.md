@@ -1,20 +1,20 @@
-# Draft of the code that makes spiral-path measurement of bed height
+# Проект кода, который позволяет измерять высоту кровати по спиральной траектории.
 
 Links to discussion:
  * https://www.facebook.com/groups/173676226330714/permalink/386872075011127/
  * https://vk.com/wall-134740295_4954
 
-## Python code that produces "height map" chart
+## Код на Python, который создает диаграмму "карта высот"
 
-Install https://www.continuum.io/downloads#windows first (you need Python 3.5 variant). After installing, open command prompt and run `pip install spyder`. This will install an interactive editor you can use to run my script.
+Сначала установите https://www.continuum.io/downloads#windows (вам нужен вариант Python 3.5). После установки откройте командную строку и запустите "pip install spyder". Это установит интерактивный редактор, который вы сможете использовать для запуска моего скрипта.
 
-Save my code in any folder. Also create a file with the name `spiralcoordinates.csv` in the same directory. CSV file must be tab-delimited, without header. Copy is attached below; alternatively you can generate your own dummy CSV file using my JavaScript wizard.
+Сохраните мой код в любой папке. Также создайте файл с именем "spiral coordinates.csv" в том же каталоге. CSV-файл должен быть разделен табуляцией, без заголовка. Копия прилагается ниже; в качестве альтернативы вы можете сгенерировать свой собственный фиктивный CSV-файл с помощью моего мастера JavaScript.
 
-It will produce the chart like this:
+Диаграмма будет выглядеть следующим образом:
 
 ![Surface plot](https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/16864382_1066469400125820_1971672729963592477_n.jpg?oh=22cba2d7a887f3ae8db9e0609dc41091&oe=594651A5)
 
-Save this to a file with `.py` extension:
+Сохраните это в файл с расширением ".py".:
 
 ```python
 import matplotlib
@@ -24,71 +24,70 @@ import matplotlib.pyplot as plt
 matplotlib.rcParams['xtick.direction'] = 'out'
 matplotlib.rcParams['ytick.direction'] = 'out'
 
-# Read in CSV file
+# Чтение CSV-файла
 import csv
 lineid = []
 xcoords = []
 ycoords = []
 zcoords = []
 with open('spiralcoordinates.csv','r') as csvfile:
-    plots = csv.reader(csvfile, delimiter='\t') # file must be tab-delimited
+    plots = csv.reader(csvfile, delimiter='\t')  # файл должен быть разделён табуляцией
     for row in plots:
-        lineid.append(   int(row[0])) # 1st column - line number (not used)
-        xcoords.append(float(row[1])) # 2nd column - x coordinate
-        ycoords.append(float(row[2])) # 3rd column - y coordinate
-        zcoords.append(float(row[3])) # 4th column - Z-probe measurement
+        lineid.append(int(row[0]))            # 1-й столбец – номер строки (не используется)
+        xcoords.append(float(row[1]))         # 2-й столбец – координата X
+        ycoords.append(float(row[2]))         # 3-й столбец – координата Y
+        zcoords.append(float(row[3]))         # 4-й столбец – измерение Z-пробника
 
-xi = np.linspace(min(xcoords)-10, max(xcoords)+10) # slightly extend boundaries of the chart
-yi = np.linspace(min(ycoords)-10, max(ycoords)+10)
+xi = np.linspace(min(xcoords) - 10, max(xcoords) + 10)  # немного расширить границы графика
+yi = np.linspace(min(ycoords) - 10, max(ycoords) + 10)
 X, Y = np.meshgrid(xi, yi)
 Z = griddata(xcoords, ycoords, zcoords, xi, yi)
 
-plt.figure(figsize=(12,10)) # almost square chart (wider to accomodate legend)
+plt.figure(figsize=(12,10))  # почти квадратный график (шире для легенды)
 
-# we combine 2 types of fill. One uses line counters:
+# комбинируем два вида заполнения. Один использует контурные линии:
 CS = plt.contour(X, Y, Z)
 plt.clabel(CS, inline=1, fontsize=10)
 
-# second is a gradient color fill:
-colorlevels = np.arange(min(zcoords) - 0.1, max(zcoords) + 0.1, ((max(zcoords) - min(zcoords)) + 0.2) / 100 ) # color gradient from min to max with 100 steps in between
-#colorlevels = [-1,	-0.9,	-0.8,	-0.7,	-0.6,	-0.5,	-0.4,	-0.3,	-0.2,	-0.1,	0,	0.1,	0.2,	0.3,	0.4,	0.5,	0.6,	0.7,	0.8,	0.9,	1]
+# второй – градиентная заливка цветом:
+colorlevels = np.arange(
+    min(zcoords) - 0.1,
+    max(zcoords) + 0.1,
+    ((max(zcoords) - min(zcoords)) + 0.2) / 100
+)  # градиент от мин. до макс. с 100 шагами между
 CS2 = plt.contourf(CS, levels=colorlevels, origin='lower')
 cbar = plt.colorbar(CS2)
 cbar.add_lines(CS)
 cbar.ax.set_ylabel('Z-probe value')
 
-# chart title:
+# заголовок графика:
 plt.title('3d printer height map')
 
-# labels of axes:
+# подписи осей:
 plt.xlabel('X axis')
 plt.ylabel('Y axis')
 
-# set the figure boundaries so it becomes square:
-lowboundary = min(
-    min(xcoords),
-    min(ycoords)
-) - 10
+# установить границы графика, чтобы он был квадратным:
+lowboundary = min(min(xcoords), min(ycoords)) - 10
+upboundary  = max(max(xcoords), max(ycoords)) + 10
 
-upboundary = max(
-    max(xcoords),
-    max(ycoords)
-) + 10
+plt.xlim([lowboundary, upboundary])
+plt.ylim([lowboundary, upboundary])
 
-plt.xlim([lowboundary,upboundary])
-plt.ylim([lowboundary,upboundary])
-
-# Fixed points for tower positions (I've placed them roughly, fix this with trigonometric formulas if you'd like):
-plt.annotate("Tower B (Y)", xy=( upboundary*2/3, lowboundary*1/3), arrowprops=dict(facecolor='black', shrink=0.05))
-plt.annotate("Tower A (X)", xy=(upboundary*-2/3, lowboundary*1/3), arrowprops=dict(facecolor='black', shrink=0.05))
-plt.annotate("Tower C (Z)", xy=(              0,  upboundary*4/5), arrowprops=dict(facecolor='black', shrink=0.05))
+# Фиксированные точки для башен (расположены приблизительно; при желании скорректируйте по формулам):
+plt.annotate("Tower B (Y)", xy=( upboundary*2/3, lowboundary*1/3),
+             arrowprops=dict(facecolor='black', shrink=0.05))
+plt.annotate("Tower A (X)", xy=(upboundary*-2/3, lowboundary*1/3),
+             arrowprops=dict(facecolor='black', shrink=0.05))
+plt.annotate("Tower C (Z)", xy=(              0, upboundary*4/5),
+             arrowprops=dict(facecolor='black', shrink=0.05))
 
 plt.show()
 ```
 
-And here is the CSV data (I obtained it from my printer after resetting it to factory defaults, so it is not "dummy"). First column is ID, next three are X, Y and Z-height.
+А вот данные в формате CSV (я получил их со своего принтера после сброса настроек к заводским настройкам, поэтому они не являются "фиктивными"). Первый столбец - это ID, следующие три - X, Y и Z-высота.
 
-Save it with the name `spiralcoordinates.csv` in the same directory as Python script. CSV file must be tab-delimited, without headers.
+Сохраните его с именем `spiral coordinates.csv` в том же каталоге, что и скрипт на Python. CSV-файл должен быть разделен табуляцией, без заголовков.
 
 ```csv
 1	0	0	33.5
@@ -203,7 +202,9 @@ Save it with the name `spiralcoordinates.csv` in the same directory as Python sc
 
 ## JavaScript implementation of spiral algorithm. 
 
-Save it to a local file and open. Feel free to play with `width`, `coils` and `chord` values. Defaults are for bed diameter of 150mm (1px equals to 1mm). It will visualize spiral and create dummy CSV file like this:
+JavaScript-реализация спирального алгоритма. 
+
+Сохраните его в локальном файле и откройте. Не стесняйтесь играть со значениями `width`, `coils` и `chord`. По умолчанию используется диаметр слоя 150 мм (1 пиксель равен 1 мм). Это позволит визуализировать спираль и создать фиктивный CSV-файл, подобный этому:
 
 <!-- ![Spiral](https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/16832090_1066396203466473_7609443908364565218_n.jpg?oh=52cac2f8183a77609d5a0991ea6c9a70&oe=59366366) -->
 
@@ -211,152 +212,120 @@ Save it to a local file and open. Feel free to play with `width`, `coils` and `c
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
-    <meta name="description" content="Points Along an Archimedean Spiral" />
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <script type="text/javascript" src="http://d3js.org/d3.v2.js"></script>
-    <style type="text/css">
-        svg {
-          background: white;
-        }
-
-        .spiral {
-          fill: none;
-          stroke: #303030;
-          stroke-width: 3px;
-        }
-        .chart {
-            margin: 10px;
-        }
-        td {
-            text-align: right;
-            min-width: 50px;
-        }
-        th, tr:nth-child(even) {
-            background-color: lightgrey;
-        }
-        tr:nth-child(odd) {
-            background-color: white;
-        }
-		textarea {
-			width: 90%;
-			height: 250px;
-		}
+    <meta charset="utf-8">
+    <meta name="description" content="Точки вдоль Архимедовой спирали для зондирования стола 3D-принтера" />
+    <script src="https://d3js.org/d3.v2.js"></script>
+    <style>
+        svg { background: white; }
+        .spiral { fill: none; stroke: #303030; stroke-width: 3px; }
+        .chart { margin: 10px; }
+        td { text-align: right; min-width: 50px; }
+        th, tr:nth-child(even) { background-color: lightgrey; }
+        tr:nth-child(odd)  { background-color: white; }
+        textarea { width: 90%; height: 250px; }
     </style>
+    <title>Спиральный путь для зондирования стола</title>
   </head>
   <body>
-    <h1>Spiral path for 3d printer's height probe</h1>
+    <h1>Спиральный маршрут для зондирования высоты стола</h1>
     <div id="chart"></div>
 
-	<h2>G-code:</h2>
-	<textarea id="gcode"></textarea>	
-	
-    <h1>Generated coordinates</h1>
-    <p>Array that would hold the list of coordinates needs to be <code id="arr"></code> elements long (including element with id 0 that holds coordinates for center point 0,0).</p>
-    <p>thetaMax is <code id="thetaMax"></code>.</p>
-    <p>chord is <code id="chord"></code>.</p>
-   
+    <h2>G-код:</h2>
+    <textarea id="gcode" readonly></textarea>
+
+    <h1>Сгенерированные координаты</h1>
+    <p>Массив для хранения списка координат должен быть длиной в <code id="arr"></code> элементов (включая элемент с id=0 для координат 0,0).</p>
+    <p>thetaMax = <code id="thetaMax"></code>.</p>
+    <p>chord = <code id="chord"></code>.</p>
+
     <table border="1">
-        <tr>
-            <th>#</th>
-            <th>X</th>
-            <th>Y</th>
-            <th>dummy Z</th>
-            <th>theta</th>
-        </tr>
-        <tbody id="coords"></tbody>
-	</table>
+      <tr>
+        <th>№</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>фиктивный Z</th>
+        <th>θ</th>
+      </tr>
+      <tbody id="coords"></tbody>
+    </table>
 
-    <script type="text/javascript"><!--
-
-        var width = 160; // width of spiral in px ("virtual" mm). Must be smaller than plate diameter
+    <script>
+        var width = 160;   // ширина спирали в px ("виртуальные" мм)
         var height = width;
-        var coils = 5.6; // Sets the number of turns the spiral makes
-        var chord = 12; // distance in px ("virtual" mm between hops of spiral)
-		
-		var z_probe_height = 28;
+        var coils = 5.6;   // число витков спирали
+        var chord = 12;    // шаг спирали в px (мм)
+        var z_probe_height = 28; // высота зондирования
 
-		document.getElementById("gcode").innerHTML = "G28 ; Home\n" +
-			"M322 ; Resets auto level matrix  (adding S3 will make change permanent)\n" +
-			"M321 ; Deactivates auto level (adding S2 will make change permanent)\n" +
-			"G28\n" +
-			"G1 X0 Y0 Z" + z_probe_height + " ;\tProbe point 0\n" +
-			"G30 P2\n";
-		
-        var centerX = width/2,
-            centerY = height/2,
-            radius = width/2;
+        // Инициализация G-кода
+        document.getElementById("gcode").textContent =
+            "G28 ; Home\n" +
+            "M322 ; Сброс матрицы автолевела\n" +
+            "M321 ; Отключение автолевела\n" +
+            "G28\n" +
+            "G1 X0 Y0 Z" + z_probe_height + " ; Точка 0\n" +
+            "G30 P2\n";
 
-        var rotation = 2 * Math.PI;
-        var thetaMax = coils * 2 * Math.PI;
-        var awayStep = radius / thetaMax;
+        var centerX = width / 2,
+            centerY = height / 2,
+            radius  = width / 2,
+            rotation = 2 * Math.PI,
+            thetaMax = coils * 2 * Math.PI,
+            awayStep = radius / thetaMax;
 
-        var i = 0;
-        var new_time = [];
-        
-        new_time.push({x: centerX, y: centerY, theta: NaN, chord: NaN}); // spiral starts at center point
-        
-        // Determining array size to hold spiral coordinates:
-        for ( theta = chord / awayStep; theta <= thetaMax; ) {
-            away = awayStep * theta;
+        var i = 0,
+            new_time = [];
+
+        new_time.push({x: centerX, y: centerY, theta: NaN, chord: NaN});
+
+        // Вычисляем размер массива
+        for (var theta = chord / awayStep; theta <= thetaMax;) {
+            var away = awayStep * theta;
             theta += chord / away;
             i++;
         }
-        document.getElementById("arr").innerHTML = i + 1; 
-        document.getElementById("thetaMax").innerHTML = thetaMax.toFixed(3); 
-        document.getElementById("chord").innerHTML    = chord; 
-        i = 0; // Reset counter
-        
-        // Calculating actual coordinates:
-        for ( theta = chord / awayStep; theta <= thetaMax; ) {
-            away = awayStep * theta;
-            around = theta + rotation;
+        document.getElementById("arr").textContent = i + 1;
+        document.getElementById("thetaMax").textContent = thetaMax.toFixed(3);
+        document.getElementById("chord").textContent    = chord;
+        i = 0;
 
-            x = centerX + Math.cos ( around ) * away;
-            y = centerY + Math.sin ( around ) * away;
-
+        // Генерация координат
+        for (var theta = chord / awayStep; theta <= thetaMax;) {
+            var away   = awayStep * theta;
+            var around = theta + rotation;
+            var x = centerX + Math.cos(around) * away;
+            var y = centerY + Math.sin(around) * away;
             theta += chord / away;
-            new_time.push({x: x, y: y, theta: theta, chord: chord});
+            new_time.push({x:x, y:y, theta:theta, chord:chord});
 
-            // Code that appends the lines to the table on the page:
+            // Добавляем в таблицу
             i++;
-            // here we adjust the coordinates so that the center of spiral is at 0, 0 point:
-            offsetX = width/2 - x;
-            offsetX = offsetX.toFixed(3);
-            offsetY = height/2 - y;
-            offsetY = offsetY.toFixed(3);
-            dummyZ  = Math.random(); // For debugging purposes we use random numbers instead of actual Z-probe values
-            dummyZ  = dummyZ.toFixed(3);
-            document.getElementById("coords").innerHTML = document.getElementById("coords").innerHTML +
-                "<tr><td>" +
-                i +
-                "</td><td>" +
-                offsetX +
-                "</td><td>" +
-                offsetY +
-                "</td><td>" +
-                dummyZ +
-                "</td><td><i>" +
-                theta.toFixed(3) +
-                "</i></td></tr>";
-        
-			document.getElementById("gcode").innerHTML = document.getElementById("gcode").innerHTML + "G1" + " X" + offsetX + " Y" + offsetY + " Z" + z_probe_height + " ;\tProbe point " + i + "\nG30 P2\n";
-		}
-		
-		document.getElementById("gcode").innerHTML = document.getElementById("gcode").innerHTML + "G28 ; Finished\nM320 S2 ; Activates auto level permanently\n\n";
+            var offsetX = (width/2 - x).toFixed(3);
+            var offsetY = (height/2 - y).toFixed(3);
+            var dummyZ  = (Math.random()).toFixed(3);
+            var row = "<tr><td>"+i+"</td><td>"+offsetX+"</td><td>"+offsetY+"</td><td>"+dummyZ+"</td><td><i>"+theta.toFixed(3)+"</i></td></tr>";
+            document.getElementById("coords").insertAdjacentHTML('beforeend', row);
 
-		
-        // code that draws spiral using SVG:
+            // Дополняем G-код
+            document.getElementById("gcode").textContent +=
+                "G1 X" + offsetX + " Y" + offsetY + " Z" + z_probe_height + " ; Точка " + i + "\nG30 P2\n";
+        }
+
+        document.getElementById("gcode").textContent +=
+            "G28 ; Завершено\n" +
+            "M320 S2 ; Включить автолевелинг навсегда\n";
+
+        // Рисуем спираль в SVG
         var svg = d3.select("#chart").append("svg")
             .attr("width", width)
             .attr("height", height)
             .append("g");
 
         var lineFunction = d3.svg.line()
-                            .x(function(d) { return d.x; })
-                            .y(function(d) { return d.y; })
-                            .interpolate("cardinal");
+            .x(function(d){return d.x;})
+            .y(function(d){return d.y;})
+            .interpolate("cardinal");
 
         svg.append("path")
           .attr("d", lineFunction(new_time))
@@ -364,98 +333,112 @@ Save it to a local file and open. Feel free to play with `width`, `coils` and `c
           .attr("stroke-width", 0.5)
           .attr("fill", "none");
 
-
-        var circles = svg.selectAll("circle")
-                        .data(new_time)
-                        .enter()
-                        .append("circle")
-                        .attr("cx", function (d) { return d.x; })
-                        .attr("cy", function (d) { return d.y; })
-                        .attr("r", 2);
-
-    --></script>
+        svg.selectAll("circle")
+          .data(new_time)
+          .enter().append("circle")
+          .attr("cx", function(d){return d.x;})
+          .attr("cy", function(d){return d.y;})
+          .attr("r", 2);
+    </script>
   </body>
 </html>
 ```
 
-## Implementation in Repetier code (does NOT work!!):
+## Реализация в коде повторителя (не работает!!):
 
-I added the following block into `commands.cpp` file, but it doesn't work properly:
+Я добавил следующий блок в файл `commands.cpp`, но он не работает должным образом:
+
+```cpp
+Думал на протяжении пары секунд
+
 
 ```cpp
 case 228: {
-	long radius = 50; // Default radius. If you have custom Z-probe, feel free to use max radius
-	float coils = 3.6; // Sets the number of turns the spiral makes
-	int chord = 15; // distance between hops in mm
-	float rotation = 2 * PI;
-	float thetaMax = coils * 2 * PI;
-	float awayStep = radius / thetaMax;
-	float offset = 0;
-	Printer::homeAxis(true, true, true); // First we home the extruder
-	GCode::executeFString(Com::tZProbeStartScript);
-	bool oldAutolevel = Printer::isAutolevelActive();
-	Printer::setAutolevelActive(false);
-	float oldFeedrate = Printer::feedrate;
-	int array_size = 0;
-	//////////////
+    long radius = 50;            // Радиус по умолчанию. При кастомном датчике Z можно поставить максимальный радиус
+    float coils = 3.6;           // Число оборотов спирали
+    int chord = 15;              // Шаг спирали в мм
+    float rotation = 2 * PI;
+    float thetaMax = coils * 2 * PI;
+    float awayStep = radius / thetaMax;
+    float offset = 0;
 
-	// Determining array size to hold spiral coordinates:
-	float theta = chord / awayStep;
-	while (theta <= thetaMax) {
-	  float away = awayStep * theta;
-	  theta += chord / away;
-	  array_size++;
-	}
-	const float position[array_size][2] {};
-	position[0][0] == 0;
-	position[0][1] == 0;
+    // Сначала делаем homing всех осей
+    Printer::homeAxis(true, true, true);
+    GCode::executeFString(Com::tZProbeStartScript);
 
-	// Calculating actual coordinates:
-	array_size = 0;
-	theta = chord / awayStep;
-	while (theta <= thetaMax) {
-	  array_size++;
-	  float away = awayStep * theta;
-	  float around = theta + rotation;
-	  theta += chord / away;
-	  position[array_size][0] == cos(around) * away;
-	  position[array_size][1] == sin(around) * away;
-	}
+    // Отключаем автолевел, сохранив предыдущий режим
+    bool oldAutolevel = Printer::isAutolevelActive();
+    Printer::setAutolevelActive(false);
 
-	// float distance[array_size];
-	Printer::moveTo(0, 0, Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, oldFeedrate); // We want the nozzle to get to the bed faster so we travel most of the distance at normal speed and slow down when close
-	offset = Printer::runZProbe(false, false, 1, false); // + Z_PROBE_BED_DISTANCE; // For some reason the first measurement returns bogus results so we discard it 
-	if (offset == ILLEGAL_Z_PROBE)
-	  return false; // Without this firmware sometimes crashes with no apparent reason
-	// Initial call to Printer::runZProbe is supposed to be with "TRUE" as first argument. But it crashes, so I call it with "false, false"        
-	// Printer::moveTo(position[0][0], position[0][1], Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, oldFeedrate);
-	Printer::moveTo(position[0][0], position[0][1], Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, EEPROM::zProbeXYSpeed());
-	// distance[0] = Printer::runZProbe(false, false, Z_PROBE_REPETITIONS, false);
-	for (uint8_t i = 1; i < (array_size - 1); i++) {
-	  // Printer::moveTo(position[i][0], position[i][1], Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, oldFeedrate);
-	  Printer::moveTo(position[i][0], position[i][1], Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, EEPROM::zProbeXYSpeed());
-	  //distance[i] = Printer::runZProbe(false, false, Z_PROBE_REPETITIONS, false);
-	}
-	// Printer::moveTo(position[(array_size - 1)][0], position[(array_size - 1)][1], Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, oldFeedrate);
-	Printer::moveTo(position[(array_size - 1)][0], position[(array_size - 1)][1], Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(), IGNORE_COORDINATE, EEPROM::zProbeXYSpeed());
-	//distance[(array_size - 1)] = Printer::runZProbe(false, true, Z_PROBE_REPETITIONS, false); // Note "true" as 2nd argument
-	Printer::updateCurrentPosition();
-	// distance[(array_size - 1)] = Printer::zLength - Printer::currentPosition[Z_AXIS];
-	// Com::printArrayFLN(Com::tZProbeDistance, distance, array_size, 2);
-	//////////////////////////////////////
+    float oldFeedrate = Printer::feedrate;
+    int array_size = 0;
 
-	Printer::feedrate = oldFeedrate;
-	Printer::setAutolevelActive(oldAutolevel);
-	Printer::updateCurrentPosition(true);
-	printCurrentPosition(PSTR("229 "));
-	GCode::executeFString(Com::tZProbeEndScript);
-	Printer::homeAxis(true, true, true);
-  }
-  break;
+    // Определяем размер массива для координат спирали
+    float theta = chord / awayStep;
+    while (theta <= thetaMax) {
+        float away = awayStep * theta;
+        theta += chord / away;
+        array_size++;
+    }
+
+    // Заводим массив для позиций (array_size × 2)
+    const float position[array_size][2] {};
+    position[0][0] = 0;
+    position[0][1] = 0;
+
+    // Вычисляем координаты точек спирали
+    array_size = 0;
+    theta = chord / awayStep;
+    while (theta <= thetaMax) {
+        array_size++;
+        float away   = awayStep * theta;
+        float around = theta + rotation;
+        theta += chord / away;
+        position[array_size][0] = cos(around) * away;
+        position[array_size][1] = sin(around) * away;
+    }
+
+    // Делаем первый пробный замер в центре
+    Printer::moveTo(
+        0, 0,
+        Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(),
+        IGNORE_COORDINATE,
+        oldFeedrate
+    ); // Чтобы быстро подлететь к столу, двигаемся по Z на большинство расстояния шустро, затем тормозим
+
+    offset = Printer::runZProbe(false, false, 1, false);
+    if (offset == ILLEGAL_Z_PROBE)
+        return false; // При ошибке зондирования может вылететь прошивка
+
+    // Собственно, сами измерения по спирали
+    for (uint8_t i = 0; i < array_size; i++) {
+        Printer::moveTo(
+            position[i][0],
+            position[i][1],
+            Z_PROBE_BED_DISTANCE * 3 + EEPROM::zProbeHeight(),
+            IGNORE_COORDINATE,
+            EEPROM::zProbeXYSpeed()
+        );
+        // Здесь можно раскомментировать для записи значений:
+        // distance[i] = Printer::runZProbe(false, false, Z_PROBE_REPETITIONS, false);
+    }
+
+    // Обновляем состояние принтера и возвращаем настройки
+    Printer::updateCurrentPosition();
+    Printer::feedrate = oldFeedrate;
+    Printer::setAutolevelActive(oldAutolevel);
+    Printer::updateCurrentPosition(true);
+
+    printCurrentPosition(PSTR("229 "));
+    GCode::executeFString(Com::tZProbeEndScript);
+
+    // Завершаем homing
+    Printer::homeAxis(true, true, true);
+}
+break;
 ```
 
-## Sample g-code (for bed with printable diameter of 160mm):
-
+## Образец g-кода (для станины диаметром для печати 160 мм):
 ```
 G28 ; Home
 M322 ; Resets auto level matrix  (adding S3 will make change permanent)

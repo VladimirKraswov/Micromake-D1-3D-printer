@@ -1,21 +1,31 @@
-# HOWTOs on Micromake D1 printer
+# Micromake D1 HOWTOs
 
-These guides were written for [Facebook group of the owners of this cheap and great 3D printer](https://www.facebook.com/groups/173676226330714/). Unfortunately, Facebook sucks as a place to post large texts so I am placing them here. Feel free to send your pull requests if you want to add something.
+Собрание руководств и инструкций для 3D‑принтера Micromake D1. Оригинально публиковалось в [Facebook‑группе владельцев](https://www.facebook.com/groups/173676226330714/). Здесь вы найдёте:
 
-##  [FAQ](./FAQ.md)
+* **FAQ** — ответы на häufig возникающие вопросы.
+* **Правильная сборка печатающей головки** — фум‑лента, термопаста и прочие советы.
+* **Ручная калибровка через Repetier Host** — пошаговое измерение и настройки G‑кодами.
+* **Замена сетевой вилки (пожароопасно!)** — как обезопасить питание.
+* **Крепление держателя катушки сверху** — экономия пространства и удобная подача филамента.
+* **Ускоренный прогрев стола с пробковой подкладкой** — теплоизоляция подогревательного стола.
+* **Размещение PSU под корпусом** — монолитная конструкция и защитная база.
+* **Удалённое управление через Orange PI и Repetier Server** — превратите принтер в сетевой узел.
 
-##  [Proper assembly of the printing head](./printhead.md)
+## Содержание
 
-##  [Manual calibration using Repetier Host](./calibrating.md)
+| Руководство                                                             | Файл                                                                               |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **FAQ**                                                                 | [FAQ](./FAQ.md)                                                                    |
+| **Правильная сборка печатающей головки**                                | [printhead](./printhead.md)                                                        |
+| **Ручная калибровка через Repetier Host**                               | [calibrating](./calibrating.md)                                                    |
+| **Замена сетевой вилки (пожароопасно!)**                                | [change power plug](./change%20power%20plug.md)                                    |
+| **Держатель катушки сверху (экономия места)**                           | [spool holder и экструдер сверху](./spool%20holder%20and%20extruder%20on%20top.md) |
+| **Ускоренный прогрев стола с пробковой подкладкой**                     | [heated bed + cork](./heated%20bed%20and%20cork.md)                                |
+| **Монтаж блока питания под принтером (экономия места)**                 | [place PSU underneath](./place%20PSU%20underneath.md)                              |
+| **Удалённое управление Micromake D1 через Orange PI и Repetier Server** | [Orange PI + Repetier](./Orange%20PI%20and%20Repetier.md)                          |
 
-##  [Changing power plug (fire hazard!)](./change%20power%20plug.md)
+---
 
-##  [Saving space by moving filament spool on top of Micromake D1](./spool%20holder%20and%20extruder%20on%20top.md)
+![Micromake D1](https://ae01.alicdn.com/kf/HTB1UT4WJVXXXXcyXFXXq6xXFXXXY/2016-Micromake-3D-Printer-Pulley-Version-Linear-Guide-DIY-Kit-Kossel-Delta-Auto-Leveling-Large-Printing.jpg)
 
-##  [Improving warm-up time of Micromake D1 with cork wrap](./heated%20bed%20and%20cork.md)
-
-##  [Placing PSU underneath Micromake D1 printer to save space](./place%20PSU%20underneath.md)
-
-##  [Control Micromake D1 remotely with Orange PI and Repetier Server](./Orange%20PI%20and%20Repetier.md)
-
-![Micromake D1 printer](https://ae01.alicdn.com/kf/HTB1UT4WJVXXXXcyXFXXq6xXFXXXY/2016-Micromake-3D-Printer-Pulley-Version-Linear-Guide-DIY-Kit-Kossel-Delta-Auto-Leveling-Large-Printing.jpg)
+*Все материалы доступны под свободной лицензией. Pull‑request приветствуются!*

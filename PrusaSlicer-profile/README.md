@@ -1,17 +1,20 @@
-# Just a bare-bones [PrusaSlicer](https://www.prusa3d.com/prusaslicer/) profile for a custom Micromake D1
+**Минимальный профиль PrusaSlicer для кастомного Micromake D1**
 
-To edit the configuration preset:
-```
-mate /Applications/Original\ Prusa\ Drivers/PrusaSlicer.app/Contents/Resources/profiles/Micromake_D1.ini
-```
+Чтобы отредактировать шаблон профиля:
 
-To clean up old config:
-```
-cd ~/Library/Application\ Support/PrusaSlicer && rm -Rf *
+```bash
+mate "/Applications/Original Prusa Drivers/PrusaSlicer.app/Contents/Resources/profiles/Micromake_D1.ini"
 ```
 
+Чтобы очистить старые настройки PrusaSlicer:
 
-To debug, run 
+```bash
+cd ~/Library/Application\ Support/PrusaSlicer
+rm -rf *
 ```
-/Applications/Original\ Prusa\ Drivers/PrusaSlicer.app/Contents/MacOS/PrusaSlicer --loglevel 4
+
+Для отладки запустите PrusaSlicer с повышенным уровнем логирования:
+
+```bash
+"/Applications/Original Prusa Drivers/PrusaSlicer.app/Contents/MacOS/PrusaSlicer" --loglevel 4
 ```

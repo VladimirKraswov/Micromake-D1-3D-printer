@@ -1,16 +1,17 @@
-# Tool for creating easy to analyze Delta Kossel bed distortion "heat maps"
+# Инструмент для создания простых в анализе "тепловых карт" искажений слоя Дельта-Косселя
 
-This simple tool allows you to measure the entire surface of the Delta 3D printer bed and plot the measurements. 
+Этот простой инструмент позволяет измерить всю поверхность слоя принтера Delta 3D и нанести результаты измерений на график. 
 
-As the result you'd get a nifty chart that visualizes the flatness of the bed - so you can improve it more easily.
+В результате вы получите отличную диаграмму, которая наглядно показывает ровность поверхности кровати, чтобы вам было легче ее улучшить.
 
 ![Sample](https://github.com/Bougakov/Micromake-D1-3D-printer/raw/master/visualize/Sample%20heat%20map%20chart.png)
 
-How to use this tool:
+Как пользоваться этим инструментом:
 
-  1. Save HTML file to your computer. Edit it if needed (for example, change diameter from 170 to something smaller and adjust z-probe height). Open it and check generated G-code. 
-  2. Paste code to Repetier and execute. 
-  3. Copy resulting log to Excel. Clean it up (use "Text to columns" feature) and save as CSV file with only 3 columns of numbers. 
-  4. Open Python script, edit it, if necessary and run it. Chart will be generated automatically. 
+1. Сохраните HTML-файл на свой компьютер. При необходимости отредактируйте его (например, поменяйте диаметр со 170 мм на нужный и скорректируйте высоту z-зондирования). Откройте файл в браузере и проверьте сгенерированный G-код.
+2. Скопируйте G-код в Repetier Host и выполните его.
+3. Скопируйте вывод консоли (лог) в Excel. С помощью функции «Текст по столбцам» разделите данные и сохраните полученную таблицу как CSV-файл, оставив только три числовых столбца (X, Y, Z).
+4. Откройте Python-скрипт, при необходимости внесите правки и запустите его. График будет построен автоматически.
+
   
 Discussion: https://www.facebook.com/groups/173676226330714/permalink/391368247894843/?match=dmlzdWFs

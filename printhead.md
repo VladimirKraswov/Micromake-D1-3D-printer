@@ -1,47 +1,72 @@
-# Proper assembly of the printing head
+# Правильная сборка печатающей головки Micromake D1
 
-Today I decided to clean the hot end of my printer, for the first time since I bought Micromake D1. I found out that molten ABS leaked in every connection and I had to soak everything in acetone for hours to clean it. So I decided to study the subject and assemble the hot end properly this time.
+Сегодня я решил впервые с момента покупки очистить хотэнд своего Micromake D1 и обнаружил, что расплавленный ABS течёт из всех соединений. Я замачивал детали в ацетоне несколько часов, чтобы очистить их. Поэтому решил собрать хотэнд правильно.
 
-The physics is like this: cold ABS filament has uniform diameter of 1.75mm:
+---
 
-![Cross-section of the hot end](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_3_prut1.jpg )
+### Физика процесса
 
-When warmed up, it expands slightly and becomes soft:
+Филамент 1.75 мм в холодном состоянии имеет равномерный диаметр:
 
-![Cross-section of the hot end](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_3_prut2.jpg )
+![Поперечное сечение (холодный)](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_3_prut1.jpg)
 
-When it reaches the temperature of about 245 degrees Celsius, it melts and goes off from the nozzle. **Basically, the expanded warm part of the filament works like a piston that fills entire diameter of the tube and pushes the molten ABS out**:
+При нагреве он слегка расширяется и становится мягким:
 
-![Cross-section of the hot end](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_4_csection.png)
+![Поперечное сечение (тёплый)](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_3_prut2.jpg)
 
-This **piston** is important for retract function to work properly. If the warm section of the filament inside the hot end tube is too long, printer can't retract the filament when necessary and leaves ugly traces like this:
+На температуре \~245 °C филамент плавится и выдавливается из сопла. **Расширенная тёплая часть филамента внутри тефлоновой трубки работает как поршень**, проталкивающий расплавленный пластик наружу:
 
-![Tears of ABS](http://3dtoday.ru/upload/blog/377/41750f2cc979fef852661dcb5a4e1e95.jpeg)
+![Поршневой эффект](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_4_csection.png)
 
-So the goal is to make the distance where the ABS melts very **abupt**.
+Этот «поршень» важен для функции ретракта. Если теплая зона филамента слишком длинная, принтер не сможет втянуть пластик, и на поверхности останутся «слёзы» ABS:
 
-Here are the parts of the printing head. ABS melts on the short end of the threaded tube (on the inside it is made from Teflon, which makes the movement of ABS super smooth), and expands in the long end. Aluminum fins help to dissipate heat - dedicated fan cools them down with air all the time. **Our goal is to protect the thermal barrier tube from getting excessive heat and help it to cool down more efficiently.**
+![Следы ABS](http://3dtoday.ru/upload/blog/377/41750f2cc979fef852661dcb5a4e1e95.jpeg)
 
-![Components](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_0_components.jpg)
+**Наша цель** — сделать границу зоны плавления максимально резкой, чтобы поршень был коротким.
 
-Go to the nearest DIY store and buy a spool of the sandard Teflon tape used in plumbing (it costs less than $1). Teflon can easily withstand heat, it is a good insulator and it makes screwing and unscrewing super easy:
+---
 
-![Teflon tape](https://www.nl.ua/upload/iblock/82f/70112178.jpg)
+### Детали хотэнда
 
-Wrap the short end of the tube in the 4cm of Teflon tape:
+1. **Тефлоновая термобарьерная трубка** с резьбой на коротком и длинном концах.
+2. **Насадка-сопло** с резьбой для подачи и выходом 0,4 мм.
+3. **Алюминиевый радиатор** (ребра) и вентилятор, постоянный обдув ребер.
+4. **Нагревательный блок** и термодатчик.
 
-![Teflon wrap](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_1_teflon.jpg)
+![Компоненты принтхэда](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_0_components.jpg)
 
-Gently apply some heatsink paste (the one that is used on computer CPUs) on the longer part. Make sure that the paste doesn't get inside the channel that delivers ABS:
+---
 
-![Heatsink paste](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_2_paste.jpg)
+### Модификация сборки
 
-You can also apply the paste on the thread of the nozzle, and fill the chamber of thermal sensor and heating element with it. 
+1. **Купите сантехническую фум-ленту (Teflon tape)**. Стоит < \$1 и выдерживает высокую температуру.
+   ![Фум-лента](https://www.nl.ua/upload/iblock/82f/70112178.jpg)
 
-## Results:
+2. **Обмотка короткого конца термобарьерной трубки**:
 
-* you have sealed all connections with Teflon and paste, molten ABS won't leak. *It will be very easy to disassemble later.*
-* you have improved *retraction*
-* you gave the thermal sensor *better reaction time* - thanks to the paste it will notice the changes in the temperature faster, giving you more stable flow of plastic
-* heater will also work more efficiently - *temperature will be less volatile*, so fewer visual differences between layers
-* nozzle itself will become hotter - *improving the emission of ABS*
+   * 4 см фум-ленты, накрученной ровными витками.
+   * Это уплотнит резьбу и предотвратит протечки ABS.
+     ![Обмотка фум-лентой](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_1_teflon.jpg)
+
+3. **Нанесение термопасты**:
+
+   * Немного пасты, используемой для CPU, на длинный конец трубки (наружная поверхность ребёр).
+   * Избегайте попадания пасты внутрь канала подачи пластика.
+     ![Термопаста](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/printhead_2_paste.jpg)
+
+4. По желанию нанесите пасту на резьбу сопла и заполните пастой зону термодатчика и нагревательного блока для более быстрой реакции и стабильности температуры.
+
+---
+
+## Итоги
+
+* **Герметичность**: все соединения уплотнены фум-лентой и пастой, ABS не будет протекать.
+* **Удобство обслуживания**: сборка легко разбирается.
+* **Улучшенный ретракт**: короткая зона плавления поршня.
+* **Быстрая реакция термодатчика**: стабильный поток пластика.
+* **Стабильность нагрева**: меньше перепадов температуры.
+* **Более горячее сопло**: лучшее выдавливание ABS.
+
+---
+
+*Это руководство помогает правильно собрать и обслуживать хотэнд Micromake D1.*

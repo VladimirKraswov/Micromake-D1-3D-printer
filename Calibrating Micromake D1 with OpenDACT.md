@@ -1,129 +1,127 @@
-Part two. Continues from "[Patching and installing Micromake D1 firmware (Repetier)](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/Installing%20custom%20firmware%.md)"
+Часть вторая. Продолжение с “[Patching and installing Micromake D1 firmware (Repetier)](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/Installing%20custom%20firmware%.md)”
 
-# Important note:
+# Важная заметка:
 
-The stock Z-probe of the Micromake is an utter shit. Because of the way it is constructed and friction between plastic parts, probing different areas of the bed produces a random error of as high as 0.2mm. Even the best calibration algorithm can't level your bed if the source data is so dirty.
+Стоковый Z-пробник (Z-probe) у Micromake — полный отстой. Из-за конструкции и трения пластиковых деталей погрешность при зондировании разных участков платформы может достигать 0,2 мм. Даже лучший алгоритм калибровки не выровняет стол, если исходные данные настолько “грязные”.
 
-The solution to this problem is this $1.5 device that should be mounted directly on the nozzle:
+Решение — вот это устройство за \$1.5, которое крепится прямо на сопло:
 
 [https://aliexpress.com/item/32838312776.html](https://alitems.com/g/1e8d1144949a590a4ec116525dc3e8/?ulp=https%3A%2F%2Faliexpress.com%2Fitem%2F32838312776.html)
 
 ![zprobe](https://user-images.githubusercontent.com/1763243/80029227-27eb3e80-84ef-11ea-9c88-dffa44bcf45f.png)
 
-Basically, it is a flexible 0.2mm thick button that clicks as soon as the nozzle reaches the bed. It is soft and doesn't flex the effector like the original mechanism does. 
+По сути, это гибкая кнопка толщиной 0,2 мм, которая срабатывает, как только сопло касается стола. Она мягкая и не “гнёт” узел, как оригинальный механизм.
 
-# Important note no. 2:
+# Важная заметка № 2:
 
-This HOWTO is no longer maintained. I've moved from stock Repetier firmware to Marlin 2.0 firmware which has an amazing feature called ["Unified bed leveling"](https://marlinfw.org/docs/features/unified_bed_leveling.html). It does its job like a magic.
+Этот HOWTO больше не поддерживается. Я перешёл со стоковой прошивки Repetier на Marlin 2.0, в которой есть замечательная функция «Unified Bed Leveling» — она работает просто волшебно.
 
-# Calibrating Micromake D1 using OpenDACT utility
+# Калибровка Micromake D1 с помощью утилиты OpenDACT
 
-Obtain the OpenDACT utility here - http://forum.seemecnc.com/viewtopic.php?f=36&t=8698 You will need version `3.0.1A`. Download the distribution, unzip it into convenient location and execute `setup.exe` first. Then, run `Delta Kinematics Calibration Tool.exe`.
+Скачать OpenDACT можно здесь: [http://forum.seemecnc.com/viewtopic.php?f=36\&t=8698](http://forum.seemecnc.com/viewtopic.php?f=36&t=8698). Вам нужна версия `3.0.1A`. Распакуйте дистрибутив в удобное место, запустите сначала `setup.exe`, а затем — `Delta Kinematics Calibration Tool.exe`.
 
-## Fix errors with non-US locale
+## Исправление ошибок при не-US локали
 
-OpenDACT has a bug - because it was written by an American, it assumes that the decimal part in integers is separated by the *point* character. Yet in Russia and few other countries *comma* is used as decimal separator instead. Once the software meets an unexpected symbol, it crashes. Author has been notified about this bug - https://github.com/RollieRowland/OpenDACT/issues/13 - but unless fixed, it can be circumvented by changing "locale settings" in Windows. Apply this fix if you are affected by this bug:
+В OpenDACT есть баг — программа ожидает, что десятичная часть отделяется точкой, а в России и некоторых других странах используется запятая. При встрече “неожиданного” символа софт падает. Автор уведомлён: [https://github.com/RollieRowland/OpenDACT/issues/13](https://github.com/RollieRowland/OpenDACT/issues/13), но пока баг не исправлен, обойти его можно сменой “региональных стандартов” в Windows. Примените эту правку, если софт падает.
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/1763243/20276440/4d898040-aaad-11e6-83a2-d61963abfb82.png)
 
-## Let's reset EEPROM settings to defaults before calibration
+## Сброс настроек EEPROM к значениям по умолчанию перед калибровкой
 
-Save your current settings to a file or write them down in case you'd want to have them back. I strongly suggest resetting all values to defaults so OpenDACT will be starting from scratch. 
+Сохраните текущие настройки в файл или запишите куда-нибудь на бумаге, чтобы при желании вернуть их назад. Я настоятельно рекомендую сбросить всё к дефолту, чтобы OpenDACT начинал “с чистого листа”.
 
-### The easiest way to edit printer's settings - using CURA
+### Проще всего — через CURA
 
-Launch CURA and connect to printer. In the menu, choose `Machine` -> `Firmware configuration`. You'll get this window:
+Запустите CURA и подключитесь к принтеру. В меню выберите `Machine` → `Firmware configuration`. Откроется такое окно:
 
 ![CURA EEPROM dialog](https://pp.userapi.com/c836128/v836128745/415b2/MxaS8MbzS88.jpg)
 
-Take a sheet of paper and write down old values before you change them to defaults - you'll need these in case you want everything back.
+Запишите старые значения на листок, затем введите дефолтные:
 
-You will have to enter these defaults::
+| Параметр                           | Описание                              | Значение по умолчанию |
+| ---------------------------------- | ------------------------------------- | --------------------- |
+| Z max length \[mm]                 | Расстояние от вершины до стола        | Оставить как есть     |
+| Tower X endstop offset \[steps]    | Смещение концевика первой башни       | `0`                   |
+| Tower Y endstop offset \[steps]    | Смещение концевика второй башни       | `0`                   |
+| Tower Z endstop offset \[steps]    | Смещение концевика третьей башни      | `0`                   |
+| Diagonal rod length \[mm]          | Длина диагоналей                      | `217`                 |
+| Horizontal rod radius at 0,0 \[mm] | Радиус горизонтальных тяг             | `94.5`                |
+| Alpha A (210)                      | Угол первой башни (X)                 | `210°`                |
+| Alpha B (330)                      | Угол второй башни (Y)                 | `330°`                |
+| Alpha C (90)                       | Угол третьей башни (Z)                | `90°`                 |
+| Delta Radius A (0)                 | Радиальное смещение первой башни      | `0`                   |
+| Delta Radius B (0)                 | Радиальное смещение второй башни      | `0`                   |
+| Delta Radius C (0)                 | Радиальное смещение третьей башни     | `0`                   |
+| Corr. diagonal A \[mm]             | Исправление наклона первой диагонали  | `0`                   |
+| Corr. diagonal B \[mm]             | Исправление наклона второй диагонали  | `0`                   |
+| Corr. diagonal C \[mm]             | Исправление наклона третьей диагонали | `0`                   |
+| Z-probe height \[mm]               | Высота сенсора Z                      | `0`                   |
 
-| Setting | What it does | default value |
-| --- | --- | --- |
-| Z max length [mm] | Sets the correct distance from top to bed | Leave as is |
-| Tower X endstop offset [steps] | Adjusts height of 1st tower | `0` |
-| Tower Y endstop offset [steps] | Adjusts height of 2nd tower | `0` |
-| Tower Z endstop offset [steps] | Adjusts height of 3rd tower | `0` |
-| Diagonal rod length [mm] | Sets the length of the diagonals | `217` |
-| Horizontal rod radius at 0,0 [mm] | Sets radius of the effector assembly | `94.5` |
-| Alpha A(210): | Adjusts the angle of 1st tower (X) | `210` degrees |
-| Alpha B(330): | Adjusts the angle of 2nd tower (Y) | `330` degrees |
-| Alpha C(90): | Adjusts the angle of 3rd tower (Z) | `90` degrees |
-| Delta Radius A(0): | Adjusts the distance of 1st tower from center | `0` |
-| Delta Radius B(0): | Adjusts the distance of 1st tower from center | `0` |
-| Delta Radius C(0): | Adjusts the distance of 1st tower from center | `0` |
-| Corr. diagonal A [mm] | Fixes the tilt of the 1st tower | `0` |
-| Corr. diagonal B [mm] | Fixes the tilt of the 2nd tower | `0` |
-| Corr. diagonal C [mm] | Fixes the tilt of the 3rd tower | `0` |
-| Z-probe height [mm]  | Sets the height of Z-sensor | `0` |
+### Для продвинутых — смена всех настроек через пакет G-код команд
 
-### Another way, for advanced users - change all settings with a batch of g-codes at once 
+Скопируйте и выполните этот список в Repetier, Pronterface или другом ПО:
 
-These g-codes will change all settings at once - copy the list and execute it using Repetier, Pronterface or whatever tool you like.
+```
+M206 T3 P153 X312.000   ; Z max length [mm]
+M206 T1 P893 S000       ; Tower X endstop offset [steps]
+M206 T1 P895 S000       ; Tower Y endstop offset [steps]
+M206 T1 P897 S000       ; Tower Z endstop offset [steps]
+M206 T3 P881 X217.000   ; Diagonal rod length [mm]
+M206 T3 P885 X95.2      ; Horizontal rod radius at 0,0 [mm]
+M206 T3 P901 X210.00    ; Alpha A(210):
+M206 T3 P905 X330.00    ; Alpha B(330):
+M206 T3 P909 X90.000    ; Alpha C(90):
+M206 T3 P913 X0.000     ; Delta Radius A(0):
+M206 T3 P917 X0.000     ; Delta Radius B(0):
+M206 T3 P921 X0.000     ; Delta Radius C(0):
+M206 T3 P933 X0.000     ; Corr. diagonal A [mm]
+M206 T3 P937 X0.000     ; Corr. diagonal B [mm]
+M206 T3 P941 X0.000     ; Corr. diagonal C [mm]
+M206 T3 P808 X0.000     ; Z-probe height [mm]
+```
 
-    M206 T3 P153 X312.000   ; Z max length [mm]
-    M206 T1 P893 S000       ; Tower X endstop offset [steps]
-    M206 T1 P895 S000       ; Tower Y endstop offset [steps]
-    M206 T1 P897 S000       ; Tower Z endstop offset [steps]
-    M206 T3 P881 X217.000   ; Diagonal rod length [mm]
-    M206 T3 P885 X95.2      ; Horizontal rod radius at 0,0 [mm]
-    M206 T3 P901 X210.00    ; Alpha A(210):
-    M206 T3 P905 X330.00    ; Alpha B(330):
-    M206 T3 P909 X90.000    ; Alpha C(90):
-    M206 T3 P913  X0.000    ; Delta Radius A(0):
-    M206 T3 P917  X0.000    ; Delta Radius B(0):
-    M206 T3 P921  X0.000    ; Delta Radius C(0):
-    M206 T3 P933  X0.000    ; Corr. diagonal A [mm]
-    M206 T3 P937  X0.000    ; Corr. diagonal B [mm] 
-    M206 T3 P941  X0.000    ; Corr. diagonal C [mm] 
-    M206 T3 P808  X0.000    ; Z-probe height [mm] 
+Убедитесь, что параметр “steps per mm” выставлен корректно — при обновлении прошивки он мог сбиться!
 
-Please ensure that the "steps per mm" parameter is correctly set - it can be corrupted during firmware upgrade!
+## Важная заметка про Z-пробник
 
-## Important note on Z-probe
+Если вы используете стоковый Z-probe — пропустите этот раздел.
 
-If you are using stock Z-probe, skip this section.
+Если вы поставили «щёлкающий» зонд, убедитесь, что в EEPROM `Z-probe height [mm]` = 0, а `Z max length [mm]` уменьшено на высоту зонда.
 
-If you are using snap-on Z-probe, please ensure that `Z-probe height [mm]` is set to zero in your printer's EEPROM, and the value of `Z max length [mm]` is decreased by the probe's height.
+Например, мой принтер 311.82 мм в высоту, а зонд “teddybear” на шарнире имеет высоту 12.4 мм. Вычитаю 12.4 из 311.82 и получаю 299.42 мм — это новое значение `Z max length [mm]`.
 
-For example, my printer's height is 311.82mm. [The "teddybear" Z-probe](https://www.facebook.com/groups/173676226330714/permalink/371138909917777/) I am using is attached below on a hinge, its height is 12.4mm. I subtracted 12.4 from the original height and got 293.42mm, - I entered this new value into EEPROM as the new `Z max length [mm]`.
+![Teddy with boner](https://scontent-ams3-1.xx.fbcdn.net/v/t1.0-9/16195531_10158495767570354_6174518943208334893_n.jpg?oh=798154abea958b18114b8c29e6ea8d4f\&oe=59636BB6)
 
-![Teddy with boner](https://scontent-ams3-1.xx.fbcdn.net/v/t1.0-9/16195531_10158495767570354_6174518943208334893_n.jpg?oh=798154abea958b18114b8c29e6ea8d4f&oe=59636BB6)
+*(Если вам нравится этот дизайн, можете купить его на [Pinshape](https://pinshape.com/items/31151-3d-printed-z-eddy-the-micromake-z-probe-e3d-v5-fits-afinibot-etc). Стоит своих денег.)*
 
-*(If you like this design of the Z-probe, you can purchase it from [Pinshape](https://pinshape.com/items/31151-3d-printed-z-eddy-the-micromake-z-probe-e3d-v5-fits-afinibot-etc). It is totally worth the asking price.)*
+## Калибровка принтера с OpenDACT
 
-## Calibrate the printer with OpenDACT
+*(Скриншоты сделаны в старой версии программы. У вас будет «3.1.0A», интерфейс слегка отличается.)*
 
-_(Please note, screenshots were made with an older version of the program. Version you've downloaded, '3.1.0A', will look slightly different.)_
-
-Launch the program. In the `Build diameter` enter the diameter of the circle you'd like to probe during calibration. _Don't be greedy_, there is no point in probing the edges of the glass. The design of the delta makes the effector bend on the edges of the plate making the measurements inaccurate. The diameter of 100 - 120mm is perfectly enough!
-
-In `Diagonal rod` field enter `217`. Select the correct port and choose `Baud rate` of `250 000`. Hit `Connect`.
-
-Then hit `Advanced`. Ensure that `Z-minimum type` is set to `FSR` (and [not](https://github.com/RollieRowland/OpenDACT/issues/14#issuecomment-288098600) `Z-probe`!), and fields `FSR plate offset` amd `Z-probe height` are set to zero. 
-
-`Z-probe start height` sets the height starting from which printer moves its effector very slowly. If you set it too high, calibration will proceed slower. Setting it too low creates the risk of full speed collision of the nozzle and the glass. Use your discretion when setting this.
-
-Once you've set the values, hit `H.A.I. Calibrate` (not `A.I. Calibrate`) or `Calibrate`). The rest will be done automatically.
+1. Запустите OpenDACT.
+2. В поле **Build diameter** задайте диаметр круга для зондирования. Не нужно жадничать — края стекла измерять бессмысленно: конструкция дельты гнётся, и данные будут не точными. Достаточно 100–120 мм.
+3. В **Diagonal rod** введите `217`.
+4. Выберите порт и Baud rate = `250000`, нажмите **Connect**.
+5. Нажмите **Advanced**. Убедитесь, что **Z-minimum type** = `FSR` (а не `Z-probe`), а **FSR plate offset** и **Z-probe height** = 0.
+6. **Z-probe start height** определяет, с какой высоты принтер будет медленно опускаться. Слишком высокая — процесс долго идёт, слишком низкая — риск столкновения на полной скорости. Подберите разумно.
+7. Нажмите **H.A.I. Calibrate** (не `A.I. Calibrate`) или просто **Calibrate**. Всё остальное сделает программа сама.
 
 ![OpenDact - 1st screenshot](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/opendact1.png)
 
-You can see for yourself how flawed your build is by looking at the values on the second tab:
+На второй вкладке увидите, насколько «кривой» ваш принтер:
 
 ![OpenDact - 2nd screenshot](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/opendact2.png)
 
-## Final notes
+## Итоговые замечания
 
-OpenDACT is buggy and glitchy yet it does amazing job. If you are good at coding in C# - please contribute to  https://github.com/RollieRowland/OpenDACT - it will be greatly appreciated by the community.
+OpenDACT нестабилен и иногда глючит, но калибровку делает отлично. Если вы умеете писать на C#, присоединяйтесь к разработке: [https://github.com/RollieRowland/OpenDACT](https://github.com/RollieRowland/OpenDACT) — сообщество будет благодарно.
 
-## Final step - adjust the Z-height
+## Финальный шаг — подстройка Z-высоты
 
-Put a piece of heavy paper on the glass - piece of thick magazine cover page is OK. Use the LCD screen menu, open `Configuration` -> `Z calib.` -> `Z position`.
+Положите на стекло лист плотной бумаги или обложку журнала. В меню на принтере зайдите в `Configuration` → `Z calib.` → `Z position`.
 
-Carefully, like a bank robber in the Hollywood heist movie, rotate the knob and bring the nozzle down so it holds paper yet you can move it with your fingers back and forth without much effort. 
+Медленно вращайте ручку, опуская сопло, пока бумагу не удерживает, но её можно свободно двигать пальцами.
 
 ![Bank heist](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/lock%20artist.jpg)
 
-Once you've found the right position, use `Set Z=0` menu to store correct height value in EEPROM.
+Когда найдёте “идеальный” зазор, выберите `Set Z=0`, чтобы сохранить значение в EEPROM.

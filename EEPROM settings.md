@@ -1,29 +1,30 @@
-# EEPROM settings for Micromake D1
+# Настройки EEPROM для Micromake D1
 
-## This Arduino sketch wipes EEPROM clean:
+## Этот скетч Arduino полностью очищает EEPROM:
 
-~~~~
+```cpp
 /*
- * EEPROM Clear
+ * Очистка EEPROM
  *
- * Sets all of the bytes of the EEPROM to 0.
+ * Устанавливает все байты EEPROM в 0.
  *
- * This example code is in the public domain.
+ * Этот пример находится в общественном достоянии.
  */
+```
 
 #include <EEPROM.h>
 
 void setup() {
-  // initialize the LED pin as an output.
+  // инициализируем вывод светодиода в качестве выходного сигнала.
   pinMode(13, OUTPUT);
   
   /***
-    Iterate through each byte of the EEPROM storage.
+    Выполните итерацию по каждому байту памяти EEPROM.
 
-    Larger AVR processors have larger EEPROM sizes, E.g:
-    - Arduno Duemilanove: 512b EEPROM storage.
-    - Arduino Uno:        1kb EEPROM storage.
-    - Arduino Mega:       4kb EEPROM storage.
+    Более крупные процессоры AVR имеют больший размер EEPROM, например:
+    - - Arduino Duemilanove: 512 кбайт памяти EEPROM.
+    - Arduino Uno: 1 Кбайт памяти EEPROM.
+    - Arduino Mega: 4 кбайт памяти EEPROM.
 
   ***/
 
@@ -31,7 +32,7 @@ void setup() {
     EEPROM.write(i, 0);
   }
 
-  // turn the LED on when we're done
+  // когда мы закончим, включи светодиод
   digitalWrite(13, HIGH);
 }
 
@@ -40,7 +41,7 @@ void loop() {
 }
 ~~~~
 
-## These are factory EEPROM settings from Cura 15.04.0917:
+## Это заводские настройки EEPROM от Cura 15.04.0917:
 
 ~~~~
 20:41:32.789 : M205
@@ -130,7 +131,7 @@ void loop() {
 20:41:33.979 : EPR:3 246 0.000 Extr.1 advance L [0=off]
 ~~~~
 
-## These are my personal EEPROM settings:
+## Это мои личные настройки EEPROM:
 
 ~~~~
 20:41:32.789 : M205
@@ -220,7 +221,7 @@ void loop() {
 20:41:33.979 : EPR:3 246 0.000 Extr.1 advance L [0=off]
 ~~~~
 
-### Difference between those (diff of two XML files):
+### Разница между ними (разница в двух XML-файлах):
 
 ~~~~
   <?xml version="1.0" encoding="utf-8"?>

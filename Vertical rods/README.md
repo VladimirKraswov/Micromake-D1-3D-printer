@@ -1,21 +1,24 @@
-# Vertical rods for Micromake printer
+# Вертикальные стержни для принтера Micromake D1
 
-Micromake sells these, yet [they are too costly](http://ali.ski/IoA41). You can order copies from a local laser- or plasma-cutting service - ask for 2mm steel.
+Micromake продаёт эти стержни, но они [слишком дорогие](http://ali.ski/IoA41). Вы можете заказать копии у местной компании по лазерной или плазменной резке — из стали толщиной 2 мм.
 
-There are 3 versions:
+### Доступные варианты
 
- * for dtandard 682mm high printer
- * for shorter 650mm version
- * for [modified 682mm version with "basement" for PSU](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/place%20PSU%20underneath.md)
- 
-The layouts were prepared in AutoCAD LT 2013 - please verify that your version matches.
- 
-Tell the metallworking company to cut steel by white lines and bend 60 degrees by yellow lines.
- 
-![Preview](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/Vertical%20rods/3%20types%20of%20Micromake%20bars.png)
+* **Стандартный** принтер высотой 682 мм
+* **Укороченный** принтер высотой 650 мм
+* **Расширенный** принтер 682 мм с «подвалом» для блока питания (см. модификацию [здесь](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/place%20PSU%20underneath.md))
 
-Bend it like this:
+Макеты подготовлены в AutoCAD LT 2013 — убедитесь, что ваша версия соответствует.
 
-![60 degrees](https://pp.userapi.com/c637427/v637427865/2284d/UaFFef5hCGo.jpg)
+### Инструкция для металло-цеха
 
-Special thanks to Sergey Mukha, Denis Morozov and Marat Khabibulin for original designs and [consultations](https://vk.com/micromake_d1?w=wall-134740295_6268).
+1. **Резка по белым линиям** — вырежьте форму из листа стали 2 мм.
+2. **Гибка по жёлтым линиям** — согните заготовки под углом 60°.
+
+![Эскизы трёх типов стержней](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/Vertical%20rods/3%20types%20of%20Micromake%20bars.png)
+
+![Пример сгиба 60°](https://pp.userapi.com/c637427/v637427865/2284d/UaFFef5hCGo.jpg)
+
+Особая благодарность Сергею Мухе, Денису Морозову и Марату Хабибулину за оригинальные дизайны и [консультации](https://vk.com/micromake_d1?w=wall-134740295_6268).
+
+*Соберите 6 таких стержней, установите их вместо штатных для замены горизонтальных направляющих принтера.*

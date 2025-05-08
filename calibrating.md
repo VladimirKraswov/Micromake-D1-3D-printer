@@ -1,281 +1,200 @@
-# Manual calibration of Micromake D1 3D printer
+# Ручная калибровка 3D-принтера Micromake D1
 
-## ** Warning! This tutorial has been deprecated - read [this 2-part article instead](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/Installing%20custom%20firmware.md) **
+## \*\*Внимание! Этот учебник устарел — читайте вместо него [эту статью в 2 частях](https://github.com/Bougakov/Micromake-D1-3D-printer/blob/master/Installing%20custom%20firmware.md) \*\*
 
-This HOWTO was written for [Micromake users' group on Facebook](https://www.facebook.com/groups/173676226330714/).
+Это руководство изначально было написано для [группы пользователей Micromake на Facebook](https://www.facebook.com/groups/173676226330714/).
 
-For a long time I wasn't able to print something with a footprint larger than 5cm in diameter on my Micromake D1. "Auto level" function in CURA never worked for me quite well. This is what I was getting with a [test plate model from Thingiverse](http://www.thingiverse.com/thing:1549840) even with the best 0.04mm tolerance:
+Долгое время я не мог напечатать что-либо диаметром более 5 см на своём Micromake D1. Функция “Auto level” в CURA никогда не работала у меня хорошо. Вот что я получал на [модели тестовой пластины с Thingiverse](http://www.thingiverse.com/thing:1549840) даже с допуском в 0,04 мм:
 
 ![Full plate test](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/leveling0.png)
 
-And now I've managed to get *this* quality with layer thickness set to 0.15mm even with full-plate prints:
+А теперь я добился такого качества при толщине слоя 0,15 мм даже для полной пластины:
 
 ![Full plate test](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/leveling1.jpg)
 
-I was inspired by this video from Repetier project. Unfortunately, it relies on some commands that Micromake D1 doesn't support, so I'll be using just the part that describes measuring offsets of each vertical tower.
+Меня вдохновило это видео от проекта Repetier. К сожалению, там используются команды, которых Micromake D1 не поддерживает, поэтому я буду использовать только часть, посвящённую измерению смещений каждой вертикальной башни.
 
-[![Video from Repetier](http://img.youtube.com/vi/L9URtv2LqKc/0.jpg)](http://www.youtube.com/watch?v=L9URtv2LqKc&t=5)
+[![Видео от Repetier](http://img.youtube.com/vi/L9URtv2LqKc/0.jpg)](http://www.youtube.com/watch?v=L9URtv2LqKc&t=5)
 
-You will need:
+Вам понадобится:
 
-* something long, like 30cm steel ruler or a piece of 30-40cm metal rod
-* calculator (Windows `calc.exe` is just fine)
-* [This brilliant online calculator](http://escher3d.com/pages/wizards/wizarddelta.php) (open it in new tab of your browser)
-* 5-10 minutes of time
-* any software that can send commands to COM port. I was using Repetier Host, but you can even use Arduino's *Serial monitor* - just set the correct port speed (250 000 baud) and connect.
+* что-то длинное, например стальная линейка \~30 см или металлический стержень 30–40 см
+* калькулятор (подойдёт Windows `calc.exe`)
+* [этот онлайн-калькулятор Escher3D](http://escher3d.com/pages/wizards/wizarddelta.php) (открыть в новой вкладке)
+* 5–10 минут времени
+* любое ПО для отправки команд на COM-порт. Я использовал Repetier Host, но можно воспользоваться даже Arduino *Serial Monitor* — просто установите скорость 250 000 бод и подключитесь.
 
-This is where you enter manual commands to your printer in [Repetier](https://www.repetier.com/):
+Вот куда вводить G-коды в Repetier:
 
 ![gcode input in Repetier](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/gcode%20input%20in%20Repetier.png)
 
+---
 
-# Some theory
+## Немного теории
 
-Delta printers have a lot of variables to play with:
+У дельта-принтеров множество переменных:
 
 ![Rods and offsets](https://www.repetier.com/firmware/v092/images/deltacolumnnames2.png)
 
-...and imperfections with lengths and towers misplaced by even a fraction of a degree can cause a lot of trouble.
+Неровности длины тяг и небольшие смещения башен даже на доли градуса дают большие погрешности.
 
-Basically, calibration means solving an equation with **seven** variables: 
+Калибровка сводится к решению уравнения с **семью** переменными:
 
-* three endstop corrections, 
-* delta radius, 
-* two tower angular position corrections, and 
-* diagonal rod length. 
+1. три коррекции концевиков
+2. радиус дельты
+3. два угловых смещения башен
+4. длина диагональных тяг
 
-It is some serious math.
-
-To make things worse, all those variables are poorly named. You might have got used with towers named X, Y and Z. To make things worse, the Cartesian axes in which the print head moves, are *also* named X, Y and Z. And, for some reason, towers are sometimes named not X, Y and Z, but A, B and C. And to seriously fuck your brain, the angles of tower placement (which are 90, 210 and 330 degrees), are also named A, B, and C. On top of that, some adjustments are measured in millimeters, and some - in motor steps. Don't ask me why.
+При этом все они по-разному называются: башни могут быть X, Y, Z или A, B, C, а углы их расположения (90°, 210°, 330°) тоже именуют A, B, C. Ещё где-то миллиметры, где-то шаги моторов… Чтобы не запутаться:
 
 ![Names explained](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/Explainer2.png)
 
-# Enough theory, let's calibrate it 
-## Step one - purge all autoleveling data your printer is storing
+---
 
-First, check that the tension of all three belts is satisfactory. Inspect all screws, tighten those that went loose. Inspect all endstops as well. This is important!
+# Приступаем к калибровке
 
-If you are printing with ABS, make sure your printer is warmed up and you are conducting the measurements on the hot printer (because metal parts expand and dimensions slightly change). On the LCD screen select `Quick settings` -> `Preheat ABS` to do that.
+## Шаг 1 — сброс данных автолевелинга
 
-If you are connected to COM port, fire this command:
-
-~~~~
-G28 ; Home
-~~~~
-
-It will tell the printer to home the printing head. Then use these:
-
-~~~~
-M321 ; Deactivates auto level 
-M322 ; Resets auto level matrix
-~~~~
-
-<!--
-M321 ; Deactivates auto level (adding S2 parameter will make change permanent)
-M322 ; Resets auto level matrix (adding S3 parameter will make change permanent) 
-G33 R0 ; Resets bump map 
--->
-
-This will reset the printer completely. 
-
-## Step two - measuring exact offsets of all three endstops
-
-Now let's bring all pulleys to the 20cm height (or, at least, what your printer *believes* is 20cm height). `X0 Y0` parameters of the following command tell the head to stay at the point with the coordinates of `0, 0` and `Z200` parameter tells it to stay 200mm from below.
-
-~~~~
-G1 X0 Y0 Z200 ; Move extruder down to 20cm height. Adjust value of "Z" if your rod / ruler won't fit
-~~~~
-
-Now comes the tricky part. Look at the schematics above, and relative to the position of the LCD screen, decide which tower is `X`, which is `Y`, and which is `Z`. Put a paper sticker with a letter on each one - it helps.
-
-Let's start with `X` tower. Place a rod firmly into the slot of the aluminum beam (I used steel ruler):
-
-![Steel ruler](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/leveling2.jpg)
-
-Next, run this command:
-
-~~~~
-M99 X0 ; Disables stepper motor for tower X for 10 seconds.
-~~~~
-
-Stepper motors for towers `Y` and `Z` will still work. But motor for tower `X` will turn off for 10 seconds and allow you to bring the pulley down, so it touches your metal rod (or ruler). Hold it firmly and wait till the stepper "wakes up". Then gently remove the rod.
-
-Repeat the procedure for remaining towers one by one:
-
-~~~~
-M99 Y0 ; Disables stepper motor for tower Y for 10 seconds.
-~~~~
-
-~~~~
-M99 Z0 ; Disables stepper motor for tower Z for 10 seconds.
-~~~~
-
-At this step you don't really need to know the exact length of your rod (or ruler). You just ensured that the distance between each pulley and the bottom is uniform. 
-
-Next, run this command:
-
-~~~~
-G132 S1 ; Calculates offsets  and stores them in EEPROM. 
-~~~~
-
-It will move all pulleys up, until they reach the endstops, and return something like this:
-
-~~~~
-Tower 1:344
-Tower 2:305
-Tower 3:100
-~~~~
-
-These are exact offsets measured by the printer. Write them down and enter them in the printer's memory ("EEPROM"). To access this dialog in Repetier, press `Alt+E`. In CURA you can get to that dialog via `Use Machine` -> `Firmware configuration` menus.
-
-![EEPROM dialog](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/EEPROM%20values.png)
-
-Send the "home all" command to apply your changes:
-
-~~~~
-G28 ; Home
-~~~~
-
-## Step three - measuring the printer's height manually
-
-I also wanted to have the printer's height measured exactly. My printer has had a value of `329.260 Z max length [mm]` stored in memory. I added 1cm (10mm) and rounded it up to 340mm and stored the new value in EEPROM. (Use `Machine` -> `Firmware configuration` menu to change printer's settings in CURA.)
-
-Run these commands to first home the head and then move it down:
-
-~~~~
-G28 ; Home
-G1 X0 Y0 Z20 ; Move extruder down to about 10mm height (20mm actual minus 10mm gap we've added by rounding up the 'Z max length')
-~~~~
-
-The printer will move the print nozzle at what it *thinks* is 2cm distance from the glass. But since we've messed with the height parameter, the actual distance will be smaller. 
-
-On the LCD screen select `Configuration` -> `Z calib.` -> `Z position`. **Gently** turn the dial counter-clockwise to move the head down. Do it slowly, like a burglar in a bank heist movie. **If you rotate the knob too fast, it will crash into the glass at full speed!**
-
-![Bank heist illustration](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/lock%20artist.jpg)
-
-If you have still "crash-landed" the nozzle in the glass, causing it to slide sideways, issue the "Home all" command to start over.
- 
-~~~~
-G28 ; Home
-~~~~
-
-Multiple advice on the web suggest using "paper test" - you place the piece of thin paper on the glass and move the nozzle down until it holds the paper firmly. I found a better way - it turns out that the sound of the fan on the printing head changes when you firmly touch the glass surface. Attention - you don't need to push down so hard that Z-probe button on the effector clicks; gentle but firm touch is enough.
-
-**Write down** the `Z position` number you got on the screen. Get a calculator and substract it from the rounded up `Z max length [mm]` value you placed into printer's EEPROM memory. This is your printer's correct print height. (If you will get negative number somehow, remember the laws of arithmetics - subtracting negative numbers means adding them.)
-
-Other option is to use the `Configuration` -> `Z calib.` -> `Set Z=0` menu while the nozzle is touching the glass. Printer will adjust the height itself.
-
-As the result we now know exact values for four of the seven variables needed by calibration formula.
-
-## Step four - online calculator by *Escher3D*
-
-Open the [link to online calculator](http://escher3d.com/pages/wizards/wizarddelta.php) and start filling these values:
-
-Setting | What to enter
---- | ---
-Firmware type: | choose `Repetier` (don't forget this one!)
-Steps/mm: | enter `100`	(or `200` if you enabled 32-microstepping using jumper on the board)	
-Initial endstop corrections: | enter the values for X, Y, Z which we just have measured with the metal rod or ruler	
-Initial diagonal rod length: | if you use standard Micromake rods, enter `217`. If you use something custom, measure length from hole to hole in mm.		
-Initial delta radius: | for the dome-shaped Micromake effector (with two fans on the sides) it is `95`mm		
-Initial homed height: | it is the height you just calculated. Enter it here.
-Initial tower angular position corrections: | leave zeroes there.
-Printable bed radius: | because I have paper clips around my glass, my print area is reduced. So in my case I entered `75`mm, but you can try `80`mm		
-Number of probe points: | change this to `10`		
-Number of factors to calibrate: | change to `7`. If you are 100% certain that your diagonal rods are `217`mm in length, but calculator would later give you some clearly wrong values, change this to `6`. This will force the calculator to play with other variables, but keep *Diagonal rod length* intact
-Normalize endstops: | leave unchecked	
-
-The calculator will suggest you ten points to probe on the print bed and will ask you to fill the distance between the glass and the print nozzle. For example, points like `X: 64.95;	Y37.50`.
-
-I found it boring to move the head to each of those ten points using just LCD screen menu and a dial. I copied the list of suggested coordinates to Windows Notepad and made a list of G-codes:
-
-~~~~
-G28
-G1 X0.00	Y75.00 Z20   ; Hover over Point 0
- ~~~~
-
-~~~~
-G28
-G1 X64.95	Y37.50 Z20   ; Hover over Point 1
-~~~~
-
-~~~~
-G28
-G1 X64.95	Y-37.50 Z20   ; Hover over Point 2
-~~~~
-
-~~~~
-G28
-G1 X0.00	Y-75.00 Z20   ; Hover over Point 3
-~~~~
-
-~~~~
-G28
-G1 X-64.95	Y-37.50 Z20   ; Hover over Point 4
-~~~~
-
-~~~~
-G28
-G1 X-64.95	Y37.50 Z20   ; Hover over Point 5
-~~~~
-
-~~~~
-G28
-G1 X0.00	Y37.50 Z20   ; Hover over Point 6
-~~~~
-
-~~~~
-G28
-G1 X32.48	Y-18.75 Z20   ; Hover over Point 7
- ~~~~
-
-~~~~
-G28
-G1 X-32.48	Y-18.75 Z20   ; Hover over Point 8
-~~~~
-
-~~~~
-G28
-G1 X0	Y0 Z20   ; Hover over Point 9
-G28 ; return back home
-~~~~
-
-Have you noticed the `Z20` in each of ten coordinates? It made the head to stop 20mm over the glass (at least, printer thought that it was 20mm...) and allowed me to move the head down manually using LCD screen menu, `Configuration` -> `Z calib.` -> `Z position`.
-
-If the nozzle touched the glass plate firmly, but the LCD screen showed me that the distance was still, say, 1.23mm, I entered **negative** 1.23 value into the form.
-
-If the glass is too far away, the value on LCD screen becomes **negative** when I finally touch the bed. In that case I enter the **positive** number in the form. I.e. if the LCD screen reads `-1.22`, I enter `1.22` into the online form for that point. 
-
-If you did everything right, you must have corrective values for each of the ten test points. 
-
-Hit *Calculate* under the form, it will give you the following output, **which needs to be saved to appropriate fields in EEPROM memory of the printer**. Make sure you enter the values with **decimal point, not comma**. This is important for Russian users, because Russian version of Windows makes decumal numbers display in the former way - if you blindly will copy&paste the values, you will confuse your printer.
-
-Value | What to do with it:
---- | ---
-New endstop corrections |	Save `X:`, `Y:` and `Z:` to `Tower X endstop offset`, `Tower Y endstop offset` and `Tower Z endstop offset`, accordingly. If the calculator gives you values with decimal part, round it to nearest value (i.e. if you get `56.9`, round it to `57`) - the printer's firmware will not accept it otherwise. 
-New diagonal rod length  |	Save to `Diagonal rod length`. It is OK if the calculator will suggest you some minor corrections to the initial value of `217`mm. If it is wildly off, consider the note about *Nuumber of factors to calibrate* above
-New delta radius | Save to `Horizontal rod radius at 0,0`
-New homed height | Save this value in `Z max length`
-New tower position angle corrections | This is the trickiest part. You need to either add or substract these values from values stored in `Alpha A(210)`, `Alpha B(330)` and `Alpha C(90)`. If, for example, the wizard gave you `Z: -0.5`, it means that you need to substract 0.5 degree form the angle of tower `Z (C)`, which, by default, is 90 degrees.
-Commands | Ignore whatever the wizard generated there. These codes work with Marlin firmware, ours doesn't understand them.
-
-You might be surprised that you had to alter the values of `Z max length` and endstop offsets that you *precisely measured before* (?!)  Actually, it makes sense. If the wizard decides that your towers are not absolutely vertical, it may decide to compensate these imperfections and altering those values will make sense. If you don't want to think about math and trigonometry, just let it go.
-
-Finish it by issuing a command that will turn auto leveling back on:
-
-~~~~
-M320 S2 ; Activates auto level permanently
-~~~~
-<!-- M323 S1 P1 ; Enables distortion correction permanently -->
-
-**If you aren't tired and want the perfect results, home the printer, restart it, and repeat this Step 4 once again.** I've got an amazing precision after just 2 attempts. On the final step the tool gave me the following estimate:
-
-> Success! Calibrated 7 factors using 10 points, deviation before 0.44, after 0.04
-
-Unlike the autolevel in CURA, this "0.04" result means that I am getting this tolerance not just on a given radius, **but in each and every point of the platform**. 
-
-This is an 11cm by 11cm print, with perfect adhesion of the ABS to a simple hair spray surface, with zero curling of the corners - all thanks to a near-perfect leveling of the print head. It doesn't scratch the glass, and extrusion width is perfect in every point. 
-
-And I am getting this result on the cheapest "pulley" edition of Micromake D1:
+1. Проверьте натяжение всех трёх ремней и затяните ослабшие винты. Проверьте концевики.
+2. Если печатаете ABS, предварительно прогрейте принтер (через «Quick settings» → «Preheat ABS»), чтобы все металлические детали расширились.
+3. Подключитесь к COM-порту и выполните:
+
+   ```
+   G28    ; Homing всех осей
+   M321   ; Деактивация автолевелинга
+   M322   ; Сброс матрицы автолевелинга
+   ```
+
+   Это полностью очистит настройки выравнивания.
+
+## Шаг 2 — измерение смещений концевиков
+
+1. Поднимите каретку до отметки 200 мм:
+
+   ```
+   G1 X0 Y0 Z200   ; Переместить экструдер на 200 мм от стола
+   ```
+2. Определите, какая башня называется X, Y, Z (относительно экрана), и наклейте на каждую бумажный ярлык с буквой.
+3. Для башни X:
+
+   ```
+   M99 X0   ; Отключить мотор башни X на 10 секунд
+   ```
+
+   Отсоединённая каретка опустится и коснётся линейки. Удерживайте линейку, пока мотор не включится снова, затем снимите линейку.
+4. То же для Y и Z:
+
+   ```
+   M99 Y0
+   M99 Z0
+   ```
+5. Теперь расстояние от каждой башни до стола одинаково. Зафиксируйте это в EEPROM:
+
+   ```
+   G132 S1   ; Вычислить и сохранить смещения концевиков
+   ```
+
+   Вы увидите в ответ:
+
+   ```
+   Tower 1:344
+   Tower 2:305
+   Tower 3:100
+   ```
+
+   Запишите эти числа и внесите их в EEPROM (в Repetier — Alt+E, в CURA — Machine → Firmware configuration).
+6. Снова:
+
+   ```
+   G28   ; Homing для применения изменений
+   ```
+
+## Шаг 3 — точное измерение высоты принтера
+
+1. Я изменил хранимое значение `Z max length [mm]` с 329.260 мм на округлённые 340 мм (добавил 10 мм “про запас”). Записать в EEPROM можно через Machine → Firmware configuration.
+2. Сделать homing и опустить экструдер на “20 мм”:
+
+   ```
+   G28
+   G1 X0 Y0 Z20
+   ```
+3. На экране принтера открыть Configuration → Z calib. → Z position. Очень медленно вращать ручку против часовой стрелки, пока сопло не коснётся стола (когда звук вентилятора изменится). **Нельзя крутить быстро — риск лобового столкновения!**
+4. Записать показание Z position. В калькуляторе вычесть его из значения `Z max length`. Получите реальную высоту печати.
+5. Можно не вычислять вручную, а при касании стола выбрать Set Z=0 — принтер сам проставит ноль.
+
+Теперь известны четыре из семи переменных.
+
+## Шаг 4 — расчёт в онлайн-калькуляторе Escher3D
+
+1. Откройте [Escher3D Wizard Delta](http://escher3d.com/pages/wizards/wizarddelta.php).
+
+2. Заполните поля:
+
+   | Параметр                             | Что ввести                                            |
+   | ------------------------------------ | ----------------------------------------------------- |
+   | Firmware type                        | Repetier                                              |
+   | Steps/mm                             | 100 (или 200 при 1/32-микрошаге)                      |
+   | Initial endstop corrections          | Смещения X, Y, Z из шага 2                            |
+   | Initial diagonal rod length          | 217 мм (или вашу длину от отверстия до отверстия)     |
+   | Initial delta radius                 | 95 мм                                                 |
+   | Initial homed height                 | Ваше значение из шага 3                               |
+   | Initial tower angular position corr. | Оставьте 0                                            |
+   | Printable bed radius                 | Например, 75–80 мм                                    |
+   | Number of probe points               | 10                                                    |
+   | Number of factors to calibrate       | 7 (или 6, если жёстко зафиксировать длину диагоналей) |
+   | Normalize endstops                   | Оставьте unchecked                                    |
+
+3. Нажмите **Calculate** — калькулятор предложит 10 координат точек для зондирования.
+
+4. Удобнее не крутить ручку, а сразу отправлять G-коды. Пример для 10 точек:
+
+   ```gcode
+   G28
+   G1 X0.00  Y75.00  Z20   ; Точка 0
+   G28
+   G1 X64.95 Y37.50 Z20   ; Точка 1
+   G28
+   G1 X64.95 Y-37.50 Z20  ; Точка 2
+   G28
+   G1 X0.00  Y-75.00 Z20  ; Точка 3
+   G28
+   G1 X-64.95 Y-37.50 Z20 ; Точка 4
+   G28
+   G1 X-64.95 Y37.50 Z20  ; Точка 5
+   G28
+   G1 X0.00  Y37.50 Z20  ; Точка 6
+   G28
+   G1 X32.48 Y-18.75 Z20 ; Точка 7
+   G28
+   G1 X-32.48 Y-18.75 Z20; Точка 8
+   G28
+   G1 X0     Y0     Z20  ; Точка 9
+   G28                    ; Вернуться домой
+   ```
+
+5. На каждой точке вручную добейте сопло до стола меню Configuration → Z position и выпишите показание.
+
+   * Если экран показывает +1.23 мм при касании — введите −1.23 в форму.
+   * Если показывает −1.22 мм — введите +1.22.
+
+6. После расчёта калькулятор выдаст новые корректирующие значения. Сохраните их в EEPROM, **используя точку как разделитель** (русскую запятую не применять):
+
+   | Вычисленное значение                | Куда вписать в EEPROM                                        |
+   | ----------------------------------- | ------------------------------------------------------------ |
+   | New endstop corrections X, Y, Z     | Tower X/Y/Z endstop offset (округлить до целого)             |
+   | New diagonal rod length             | Diagonal rod length                                          |
+   | New delta radius                    | Horizontal rod radius at 0,0                                 |
+   | New homed height                    | Z max length                                                 |
+   | New tower angle corrections A, B, C | Прибавить/вычесть к Alpha A(210), B(330), C(90) (в градусах) |
+
+7. Включите автолевелинг обратно:
+
+   ```
+   M320 S2   ; Активировать автоуровень навсегда
+   ```
+
+8. **При желании** повторите шаг 4 ещё раз — я получил “deviation before 0.44, after 0.04” уже после двух проходов!
+
+В результате вы добьётесь точности \~0,04 мм в любой точке стола. Пример 11×11 см ABS-печати без подъёма углов:
 
 ![Results](https://raw.githubusercontent.com/Bougakov/Micromake-D1-3D-printer/master/images/leveling3.jpg)
